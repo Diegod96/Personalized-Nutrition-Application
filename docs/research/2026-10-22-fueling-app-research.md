@@ -166,7 +166,7 @@ The athlete enters current and goal weight and picks a weekly pace. The daily en
 2. **Starting estimate:** 7,700 kcal per kg (3,500 per lb), the same constant MyFitnessPal uses (500 kcal a day per pound a week). It "consistently" overestimates loss over time (*Proc Nutr Soc* 2022, PMID 35103583), so it's only the first week's guess.
 3. **Weekly recalibration (adaptive, as in MacroFactor):** every Monday, re-estimate expenditure from the 7-day weight trend and logged intake. This needs at least 3 weigh-ins and mostly complete logging that week. Otherwise the targets hold and the app says why.
 4. **Where the deficit goes:**
-   - None on GREEN days or the day before a key session.
+   - None on GREEN days or the day before a key session. A key session is a race, a session the athlete marks as key, or any session over 2.5 h, the same trigger as the carb look-ahead above.
    - The weekly deficit goes on AMBER and RED days, taken from fat and non-session carbs.
    - Before, during and after carbs never shrink.
 5. **Floors:**
@@ -185,8 +185,8 @@ Worked example (Alex, 70 kg, goal 67 kg, 0.5% a week; this week's plan from the 
 |---|---|
 | Requested pace | 0.35 kg a week, about 2,695 kcal a week |
 | Daily cap from the energy-availability floor (fat-free mass 60.2 kg at an assumed 14% body fat; base 2,309 kcal) | about 500 kcal on each AMBER or RED day |
-| This week (Mon, Wed, Fri, Sun) | −2,000 kcal, about 0.26 kg |
-| Projected goal date | about 10 Jan 2027 (21 Dec 2026 at the full pace) |
+| This week: Mon, Fri, Sun. Wednesday is held because it's the day before Thursday's 3 h ride, which is also when its carbs are topped up | −1,500 kcal, about 0.19 kg |
+| Projected goal date | about 7 Feb 2027 (21 Dec 2026 at the full pace) |
 | Protein | 140 g a day |
 
 **Caffeine (proposed; a sports dietitian must sign off)**
