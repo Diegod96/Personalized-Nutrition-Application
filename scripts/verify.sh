@@ -14,8 +14,10 @@ verify_engine() {
 }
 
 verify_app() {
-  local project
-  project=$(find App -maxdepth 2 -name '*.xcodeproj' -print -quit 2>/dev/null || true)
+  local project=""
+  if [[ -d App ]]; then
+    project=$(find App -maxdepth 2 -name '*.xcodeproj' -print -quit)
+  fi
   if [[ -z "$project" ]]; then
     echo "No Xcode project under App/ yet; skipping"
     return 0

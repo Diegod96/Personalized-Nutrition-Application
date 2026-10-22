@@ -28,18 +28,19 @@ scripts/verify.sh         the one verification command
 
 Rules:
 
+- `main` is protected by a ruleset: changes land only through PRs, and the CI checks (`changes`, `engine`, `app`, `supabase`) must pass.
 - Commit or push only when asked.
 - Stage by explicit path. No `git add -A`, `git add .` or `git commit -a`. Check `git diff --cached --name-only` before committing.
 - Never commit agent scratch: `.claude/`, `tmp/`, plans, scratch scripts.
 
 ## Verification loop
 
-Run these steps for every issue, in order. A step is done only when its done-condition holds.
+Run these steps for every feature issue, in order. A step is done only when its done-condition holds. Paperwork issues (label `paperwork`) have no branch and skip the loop: they're done when every box is ticked and the evidence (a reply, a link, a decision) is recorded in the issue.
 
 1. **Map.** Read the issue, the report section and wireframe screen it references, and the code it touches.
-   Done when every acceptance criterion maps to a test or a screenshot.
-2. **Build.** Implement on the issue branch and write a test for each acceptance criterion. Fueling-rule tests are table-driven "golden cases", and each case cites the §4 rule or source it checks.
-   Done when every criterion has its test.
+   Done when every acceptance criterion maps to a test, or, where a test can't prove it (how a screen looks, device-only behavior), to a screenshot or a written manual check.
+2. **Build.** Implement on the issue branch and write the tests from Map. Fueling-rule tests are table-driven "golden cases", and each case cites the §4 rule or source it checks.
+   Done when every criterion has its test or its planned screenshot or manual check.
 3. **Verify.** Run `scripts/verify.sh` locally, then push and let CI run on the PR.
    Done when both are green.
 4. **Review.** Get an independent review of the PR diff against the issue's acceptance criteria. Fix findings on the same branch and go back to Verify.
