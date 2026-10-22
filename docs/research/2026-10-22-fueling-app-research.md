@@ -155,6 +155,74 @@ The guidelines above give ranges. Hexis and Fuelin don't publish how they choose
 
 All the wireframe numbers sit inside the ACSM ranges. The rules give a day about 13% lower, mostly because of the 3 g/kg base.
 
+**Goal weight (proposed; a sports dietitian must sign off)**
+
+The athlete enters current and goal weight and picks a weekly pace. The daily energy target moves to reach the goal, MyFitnessPal-style, but inside the training rules above.
+
+1. **Pace:** 0.25%, 0.5% (default), 0.75% or 1% of body weight per week, never more than 1 kg a week.
+   - Garthe et al. 2011 (24 athletes; *IJSNEM* 21:97, PMID 21558571): lean mass rose 2.1% at 0.7% a week and was unchanged in the faster group (which achieved 1.0% a week). The authors recommend 0.7%.
+   - MacroFactor's Fat-Loss Handbook gives 0.25–1% a week, with 1 kg a week as "a good 'upper limit' for most people."
+   - Gaining: 0.25–0.5% a week (secondary source, not re-checked).
+2. **Starting estimate:** 7,700 kcal per kg (3,500 per lb), the same constant MyFitnessPal uses (500 kcal a day per pound a week). It "consistently" overestimates loss over time (*Proc Nutr Soc* 2022, PMID 35103583), so it's only the first week's guess.
+3. **Weekly recalibration (adaptive, as in MacroFactor):** every Monday, re-estimate expenditure from the 7-day weight trend and logged intake. This needs at least 3 weigh-ins and mostly complete logging that week. Otherwise the targets hold and the app says why.
+4. **Where the deficit goes:**
+   - None on GREEN days or the day before a key session.
+   - The weekly deficit goes on AMBER and RED days, taken from fat and non-session carbs.
+   - Before, during and after carbs never shrink.
+5. **Floors:**
+   - **Energy availability:** no planned day below 30 kcal per kg of fat-free mass after training (IOC 2023 treats about 30 as a guide). When this floor caps the deficit, the app slows the pace and moves the projected date instead of under-fueling.
+   - **Calories:** never below 1,200 (women) or 1,500 (men), MyFitnessPal's defaults.
+   - **Goal weight:** no goal below BMI 18.5. This is a design default; we found no published rule for apps.
+6. **Protein while losing:** about 2.0 g/kg body weight. That's about 2.3 g/kg of fat-free mass, the low end of the 2.3–3.1 g/kg FFM in Helms et al. 2014 (PMC4033492), which the ISSN 2017 protein stand cites (secondary source, not re-checked).
+7. **Eligibility and safety:**
+   - No weight-loss pace for under-18s, during pregnancy, or for anyone the eating-disorder screen flags.
+   - A sustained low-energy-availability flag pauses the deficit.
+   - Calories stay hidden by default. The goal screen shows pace and projected date; calories appear with "Show calories." Levinson et al. 2017 found 73% of eating-disorder patients who used MyFitnessPal said it at least somewhat contributed to their disorder (PMC5700836).
+
+Worked example (Alex, 70 kg, goal 67 kg, 0.5% a week; this week's plan from the wireframes):
+
+| Step | Value |
+|---|---|
+| Requested pace | 0.35 kg a week, about 2,695 kcal a week |
+| Daily cap from the energy-availability floor (fat-free mass 60.2 kg at an assumed 14% body fat; base 2,309 kcal) | about 500 kcal on each AMBER or RED day |
+| This week (Mon, Wed, Fri, Sun) | −2,000 kcal, about 0.26 kg |
+| Projected goal date | about 10 Jan 2027 (21 Dec 2026 at the full pace) |
+| Protein | 140 g a day |
+
+**Caffeine (proposed; a sports dietitian must sign off)**
+
+1. **Logging:** caffeine comes from logged foods and from Apple Health's `dietaryCaffeine` type.
+   - Food sources: USDA FoodData Central (nutrient 1057), Open Food Facts where present, and gel labels.
+   - Gel labels, a snapshot to re-check before shipping: Maurten Gel 100 CAF 100, 100 mg; PF 30 Caffeine Gel, 100 mg; GU Roctane, 70 mg; SiS GO Energy + Caffeine, 75 mg.
+   - Quick-add buttons for coffee, espresso, tea and gels.
+2. **The curve:** caffeine in the body, in mg over 24 hours. It's a one-compartment model with first-order absorption and elimination, summed over doses.
+   - Half-life defaults to 5 h. Healthy adults are typically 3–7 h; the setting is adjustable from 3 to 10 h. It's longer with oral contraceptives and in late pregnancy, and shorter in smokers.
+   - Absorption is set so each dose peaks about 40 minutes after it's taken (Blanchard & Sawers 1983: peak at 29.8 ± 8.1 min).
+   - Markers show each dose, the planned session window, bedtime and a "last call" line.
+3. **Sleep:** Gardiner et al. 2023 (*Sleep Med Rev*, PMID 36870101) found caffeine cut total sleep by 45 minutes on average.
+   - Coffee (107 mg) "should be consumed at least 8.8 h prior to bedtime," and a pre-workout serving (217.5 mg) at least 13.2 h before.
+   - The app's last call is bedtime − 8.8 h for coffee-sized doses and − 13.2 h for doses around 200 mg or more. It warns when a planned or logged dose falls after last call.
+   - No source gives a safe level at bedtime, so the curve shows the estimate without a pass or fail line.
+4. **Performance (opt-in only):** ISSN 2021 (Guest et al., PMC7777221) found:
+   - "doses of 3–6 mg/kg" improve performance, and the minimal effective dose "may be as low as 2 mg/kg";
+   - "The most commonly used timing … is 60 min pre-exercise";
+   - caffeinated gels and gum work, mainly in aerobic exercise;
+   - "9 mg/kg" brings "a high incidence of side-effects."
+
+   The app suggests at most 2–3 mg/kg, only when the athlete opts in, and never to under-18s or during pregnancy.
+5. **Limits:** FDA: 400 mg a day for most adults. EFSA: a 200 mg single dose (about 3 mg/kg). Pregnancy: 200 mg a day (EFSA, ACOG). ISSN's 3–6 mg/kg (210–420 mg at 70 kg) is above EFSA's single dose, so the dietitian sets the app's ceiling.
+
+Worked example (Tuesday; coffee 100 mg at 07:30, caffeinated gel 100 mg at 17:20, bed at 22:30, half-life 5 h):
+
+| Time | Caffeine in body |
+|---|---|
+| 08:10 (coffee peak) | about 91 mg |
+| 17:20 (gel) | 26 mg |
+| 18:00 (on the bike) | 115 mg |
+| 22:30 (bedtime) | 63 mg, 50 of it from the gel |
+
+Coffee's last call is 13:42, so the app flags the gel and suggests a non-caffeinated gel, or saving caffeine for race day. The gel is also only 1.4 mg/kg, below the roughly 2 mg/kg ISSN minimum.
+
 **Safety**
 - **Low energy availability (IOC 2023 REDs consensus, doi 10.1136/bjsports-2023-106994):** the commonly used cut-off of about 30 kcal per kg fat-free mass per day is "a guide, rather than a diagnostic end-point." Flag sustained low intake against load and refer to a professional; never diagnose.
 - **Screening tools:** LEAF-Q (female athletes; 78% sensitivity, 90% specificity), REDs CAT2, SCOFF.
@@ -233,6 +301,19 @@ Supersapiens shut down in early 2024. WHOOP and TrainingPeaks have no meal plann
 - **Carb-cost estimates disagree:** an Intervals.icu user reported 266 g used on a 3 h Zone 2 ride against 136 g from EatMyRide, and said Intervals.icu "seems to greatly overstate" carbs used (forum, Aug 2025). The Intervals.icu method description comes from a forum member, not the developer.
 - **Hexis rest-day carbs:** Roadman's review reverse-engineers about 28% of rest-day calories from carbs (about 1.5 g/kg for its 82 kg example). Hexis's own webinar says 3–5 g/kg. Treat Roadman's number as unverified.
 - **TrainingPeaks Fueling Insights** predicts carb and fat use for planned structured workouts (built with Iñigo San Millán). Whether the Partner API exposes it is unknown.
+- **Goal weight, not verified:**
+  - MyFitnessPal's full list of pace options.
+  - MacroFactor's exact update rules (only help-center summaries were read).
+  - Any published goal-BMI floor or app-store minimum-calorie rule.
+  - The gain-rate source.
+  - Helms et al. 2014's protein figures (read through a secondary source).
+- **Caffeine, not verified:**
+  - Any "safe" residual level at bedtime.
+  - Whether HealthKit allows writing `dietaryCaffeine` (the type exists).
+  - Open Food Facts' caffeine coverage and units.
+  - The ISSN statement on gels taken 10 minutes before exercise (agent-quoted).
+  - Gel labels, which are a snapshot.
+  - The 5 h default half-life: a typical value, not a fitted one. One caffeine app uses 5.7 h.
 - **Apple Health food data:** whether MyFitnessPal and Cronometer food records can be split into meals.
 - **Exclusion list:** no published dietetic guidance on which users a consumer app should exclude (diabetes, pregnancy, under-18s); the recommendation in §4 is a reasoned default.
 - **Not researched:** Apple Watch, widget and App Intents specifics, and Live Activities beyond the 8-hour limit.
@@ -362,6 +443,11 @@ Supabase Team ($599/mo) plus its HIPAA add-on (the price isn't published; a 2025
 - TrainingPeaks Fueling Insights: https://help.trainingpeaks.com/hc/en-us/articles/34580444343053-Substrate-Utilization-Fueling-Insights
 - Fuelin method overview: https://fuelin.com/articles/the-magic-behind-fuelin
 - Hexis Tour de France webinar Q&A: https://hexis.live/blog/fuelling-the-tour-de-france-webinar-your-questions-answered
+- Garthe et al. 2011, weight-loss rate in athletes: https://pubmed.ncbi.nlm.nih.gov/21558571/
+- MyFitnessPal, how initial goals are calculated: https://support.myfitnesspal.com/hc/en-us/articles/360032625391-How-does-MyFitnessPal-calculate-my-initial-goals
+- MacroFactor Fat-Loss Handbook: https://macrofactor.com/wp-content/uploads/2025/11/MacroFactor-Fat-Loss-Handbook.pdf
+- ISSN position stand on caffeine (Guest et al. 2021): https://pmc.ncbi.nlm.nih.gov/articles/PMC7777221/
+- Gardiner et al. 2023, caffeine and sleep: https://pubmed.ncbi.nlm.nih.gov/36870101/
 - Apple HealthKit privacy: https://developer.apple.com/documentation/healthkit/protecting-user-privacy
 - App Review Guidelines: https://developer.apple.com/app-store/review/guidelines/
 - WorkoutKit scheduler: https://developer.apple.com/documentation/workoutkit/workoutscheduler
