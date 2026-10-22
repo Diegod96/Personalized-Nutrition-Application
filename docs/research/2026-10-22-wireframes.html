@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fueling app wireframes · 2026-10-22</title>
+<style>
+.wf{
+  --c-fg:var(--foreground,#f2f2f7);
+  --c-card:var(--card,#1c1c1e);
+  --c-card-fg:var(--card-foreground,#f2f2f7);
+  --c-muted:var(--muted,#2c2c2e);
+  --c-muted-fg:var(--muted-foreground,#98989f);
+  --c-border:var(--border,#3a3a3c);
+  --c-pri:var(--primary,#0a84ff);
+  --c-pri-fg:var(--primary-foreground,#ffffff);
+  --c-acc:var(--accent,#2c2c2e);
+  --c-acc-fg:var(--accent-foreground,#f2f2f7);
+  --c-ok:var(--success,#30d158);
+  --c-warn:var(--warning,#ff9f0a);
+  --c-bad:var(--destructive,#ff453a);
+  --c-info:var(--info,#64d2ff);
+  --r:var(--radius,10px);
+  font-family:var(--font-sans,-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,Helvetica,Arial,sans-serif);
+  color:var(--c-fg);
+  font-size:13px;
+  line-height:1.35;
+  margin:0;
+  padding:0;
+}
+.wf *{box-sizing:border-box}
+.wf .note{color:var(--c-muted-fg);font-size:13px;margin:0 0 16px}
+.wf .note.foot{margin:20px 0 0}
+.wf .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:24px}
+.wf figure{margin:0;display:flex;flex-direction:column;align-items:center;min-width:0}
+.wf .phone{flex:1;width:100%;max-width:320px;display:flex;flex-direction:column;background:var(--c-card);color:var(--c-card-fg);border:1px solid var(--c-border);border-radius:32px;padding:16px;overflow:hidden}
+.wf figcaption{width:100%;max-width:320px;margin-top:8px;color:var(--c-muted-fg);font-size:12px;line-height:1.4}
+.wf figcaption b{display:block;color:var(--c-fg);font-size:13px;margin-bottom:2px}
+/* status bar */
+.wf .sb{display:flex;justify-content:space-between;align-items:center;font-size:12px;font-weight:600;padding:0 6px 10px}
+.wf .sb span:last-child{font-size:11px;letter-spacing:1px}
+.wf .scr{display:flex;flex-direction:column;gap:10px}
+.wf h3{font-size:15px;margin:0;font-weight:700}
+.wf .sub{margin:0;font-size:12px;color:var(--c-muted-fg)}
+.wf small,.wf .mut{display:block;font-size:11px;color:var(--c-muted-fg);line-height:1.3}
+.wf .mut.in{display:inline}
+.wf .back{font-size:12px;color:var(--c-pri)}
+/* boxes and rows */
+.wf .box{border:1px solid var(--c-border);border-radius:var(--r);overflow:hidden}
+.wf .row{display:flex;align-items:center;gap:8px;padding:8px 10px;border-top:1px solid var(--c-border)}
+.wf .box>.row:first-child{border-top:0}
+.wf .grow{flex:1;min-width:0}
+.wf .ic{flex:none;width:26px;height:26px;border-radius:7px;background:var(--c-muted);color:var(--c-muted-fg);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700}
+.wf .dim{opacity:.55}
+.wf .end{flex:none;text-align:right;font-size:12px}
+/* buttons and links */
+.wf .btn{display:inline-block;flex:none;border:1px solid var(--c-border);border-radius:999px;padding:4px 10px;font-size:12px;font-weight:600;color:var(--c-fg);background:transparent;white-space:nowrap}
+.wf .btn.pri{background:var(--c-pri);border-color:var(--c-pri);color:var(--c-pri-fg)}
+.wf .btn.blk{display:block;text-align:center;padding:9px 12px;font-size:14px;border-radius:12px}
+.wf .btn.warn{border-color:var(--c-warn);background:color-mix(in srgb,var(--c-warn) 18%,transparent)}
+.wf .lnk{color:var(--c-pri);font-size:12px}
+.wf .chips{display:flex;flex-wrap:wrap;gap:6px}
+.wf .chip{border:1px solid var(--c-border);border-radius:999px;padding:3px 9px;font-size:11px;color:var(--c-fg)}
+.wf .chip.on{background:var(--c-acc);color:var(--c-acc-fg);border-color:var(--c-fg)}
+/* toggle */
+.wf .tg{flex:none;width:32px;height:19px;border-radius:999px;background:var(--c-muted);position:relative}
+.wf .tg::after{content:"";position:absolute;top:2px;left:2px;width:15px;height:15px;border-radius:50%;background:var(--c-card);border:1px solid var(--c-border)}
+.wf .tg.on{background:var(--c-ok)}
+.wf .tg.on::after{left:15px}
+/* carb codes: colour always paired with a label */
+.wf .pill{display:inline-flex;align-items:center;gap:5px;border:1px solid var(--c-border);border-radius:999px;padding:2px 8px;font-size:11px;font-weight:600;white-space:nowrap;color:var(--c-fg)}
+.wf .pill::before{content:"";width:8px;height:8px;border-radius:50%;background:currentColor}
+.wf .g{border-color:var(--c-ok);background:color-mix(in srgb,var(--c-ok) 14%,var(--c-card))}
+.wf .a{border-color:var(--c-warn);background:color-mix(in srgb,var(--c-warn) 14%,var(--c-card))}
+.wf .rd{border-color:var(--c-bad);background:color-mix(in srgb,var(--c-bad) 14%,var(--c-card))}
+.wf .g::before{background:var(--c-ok)}
+.wf .a::before{background:var(--c-warn)}
+.wf .rd::before{background:var(--c-bad)}
+.wf .dot{flex:none;width:9px;height:9px;border-radius:50%;margin-top:4px}
+.wf .dot.g{background:var(--c-ok)}
+.wf .ok{color:var(--c-ok);font-weight:700}
+.wf .wk{color:var(--c-warn);font-weight:700}
+/* progress */
+.wf .pb{display:flex;flex-direction:column;gap:3px}
+.wf .pbl{display:flex;justify-content:space-between;font-size:12px}
+.wf .bar{height:7px;border-radius:999px;background:var(--c-muted);overflow:hidden}
+.wf .bar i{display:block;height:100%;background:var(--c-pri);border-radius:999px}
+/* highlight card */
+.wf .hl{border:1px solid var(--c-pri);background:color-mix(in srgb,var(--c-pri) 10%,transparent);border-radius:var(--r);padding:10px;display:flex;flex-direction:column;gap:7px}
+.wf .lbl{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--c-muted-fg)}
+/* timeline */
+.wf .tl{display:flex;flex-direction:column}
+.wf .tli{display:flex;gap:8px;align-items:flex-start;padding:6px 0;border-top:1px solid var(--c-border)}
+.wf .tli:first-child{border-top:0}
+.wf .tm{flex:none;width:36px;font-size:11px;color:var(--c-muted-fg);font-family:var(--font-mono,ui-monospace,Menlo,monospace);padding-top:1px}
+.wf .tli b{font-size:12px}
+.wf .tli .code{flex:none;font-size:11px;color:var(--c-muted-fg)}
+.wf .tli.ride{background:var(--c-acc);color:var(--c-acc-fg);border-radius:8px;padding:6px;border-top-color:transparent;margin:2px 0}
+.wf .tli.ride .tm,.wf .tli.ride small,.wf .tli.ride .code{color:inherit;opacity:.8}
+/* sections */
+.wf .sec{border:1px solid var(--c-border);border-radius:var(--r);padding:9px 10px;display:flex;flex-direction:column;gap:4px}
+.wf .sech{display:flex;justify-content:space-between;align-items:baseline;gap:6px}
+.wf .sech b{font-size:13px}
+.wf .tgt{font-size:12px;font-weight:600}
+.wf .rule{font-family:var(--font-mono,ui-monospace,Menlo,monospace);font-size:11px;color:var(--c-muted-fg);border-top:1px dashed var(--c-border);padding-top:4px;margin-top:2px}
+/* week */
+.wf .wrow{display:grid;grid-template-columns:30px 66px 1fr auto;gap:6px;align-items:start;padding:7px 8px;border-top:1px solid var(--c-border)}
+.wf .box>.wrow:first-child{border-top:0}
+.wf .wrow.today{background:var(--c-acc);color:var(--c-acc-fg)}
+.wf .wrow.today small{color:inherit;opacity:.8}
+.wf .wrow .d{font-weight:700;font-size:12px}
+.wf .wrow .gr{font-weight:600;font-size:12px;text-align:right}
+/* log */
+.wf .search{display:flex;gap:6px}
+.wf .field{flex:1;border:1px solid var(--c-border);border-radius:9px;padding:6px 9px;font-size:12px;color:var(--c-muted-fg);background:var(--c-muted)}
+.wf .sq{flex:none;width:32px;border:1px solid var(--c-border);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:13px}
+.wf .item{display:flex;flex-direction:column;gap:4px}
+.wf .amt{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--c-muted-fg);flex-wrap:wrap}
+.wf .inp{border:1px solid var(--c-border);border-radius:6px;padding:1px 6px;font-size:11px;color:var(--c-fg)}
+.wf .total{border:1px solid var(--c-ok);background:color-mix(in srgb,var(--c-ok) 12%,transparent);border-radius:var(--r);padding:8px 10px;font-size:12px;font-weight:600;display:flex;justify-content:space-between;gap:6px}
+/* recipes */
+.wf .rc{display:flex;gap:10px;border:1px solid var(--c-border);border-radius:var(--r);padding:8px;align-items:center}
+.wf .img{flex:none;width:58px;height:58px;border-radius:8px;background:var(--c-muted);position:relative;overflow:hidden}
+.wf .img::before,.wf .img::after{content:"";position:absolute;left:50%;top:50%;width:76px;height:1px;background:var(--c-border);transform:translate(-50%,-50%) rotate(45deg)}
+.wf .img::after{transform:translate(-50%,-50%) rotate(-45deg)}
+.wf .rc b{font-size:12px;display:block}
+/* tab bar */
+.wf .tabs{margin-top:auto;padding-top:12px}
+.wf .tabs div{display:flex;justify-content:space-around;border-top:1px solid var(--c-border);padding-top:8px}
+.wf .tabs span{display:flex;flex-direction:column;align-items:center;gap:1px;font-size:11px;color:var(--c-muted-fg)}
+.wf .tabs span i{font-style:normal;font-size:14px;line-height:1}
+.wf .tabs span.on{color:var(--c-pri);font-weight:700}
+</style>
+</head>
+<body>
+<div class="wf">
+<p class="note">Mid-fidelity wireframes · example athlete: 70 kg cyclist · calories hidden by default.</p>
+<div class="grid">
+
+<!-- 1 Connect your data -->
+<figure>
+<div class="phone">
+  <div class="sb"><span>9:41</span><span>▮▮▮ ◠ ▭</span></div>
+  <div class="scr">
+    <div class="pb"><span class="mut">Step 2 of 3</span><div class="bar"><i style="width:66%"></i></div></div>
+    <div><h3>Connect your data</h3><p class="sub">We read your training so your meals match it.</p></div>
+    <div class="box">
+      <div class="row"><div class="ic">♥</div><div class="grow"><b>Apple Health</b><small>Workouts, weight, HRV, sleep. Also brings in Garmin, Strava, MyFitnessPal and Cronometer.</small></div><span class="end">Connected <span class="ok">✓</span></span></div>
+      <div class="row"><div class="ic">i</div><div class="grow"><b>Intervals.icu</b><small>Planned workouts, updates within minutes</small></div><span class="btn pri">Connect</span></div>
+      <div class="row"><div class="ic">W</div><div class="grow"><b>WHOOP</b><small>Recovery, sleep, strain</small></div><span class="btn pri">Connect</span></div>
+      <div class="row dim"><div class="ic">TP</div><div class="grow"><b>TrainingPeaks</b><small>Use your calendar link for now</small></div><span class="end mut">Coming soon</span></div>
+    </div>
+    <span class="lnk">Add workouts by hand instead ▸</span>
+    <div class="box"><div class="row"><div class="grow" style="font-size:12px">I log food in MyFitnessPal or Cronometer: import it</div><span class="tg on" aria-label="on"></span></div></div>
+    <span class="btn pri blk">Continue</span>
+    <small style="text-align:center">Takes about 60 seconds. You can change this later.</small>
+  </div>
+</div>
+<figcaption><b>1 · Connect your data (onboarding)</b>Fixes: long quiz before value (Fuelin); planned workouts missing (Intervals.icu isn't in Fuelin; Runna and Garmin plans don't import); forced logger switch.</figcaption>
+</figure>
+
+<!-- 2 Today -->
+<figure>
+<div class="phone">
+  <div class="sb"><span>9:41</span><span>▮▮▮ ◠ ▭</span></div>
+  <div class="scr">
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:6px"><h3>Tue 22 Oct</h3><span class="pill g">GREEN · high carb day</span></div>
+    <div class="pb"><div class="pbl"><span>Carbs</span><span>210 / 490 g</span></div><div class="bar"><i style="width:43%"></i></div></div>
+    <div class="pb"><div class="pbl"><span>Protein</span><span>65 / 120 g</span></div><div class="bar"><i style="width:54%"></i></div></div>
+    <div class="pb"><div class="pbl"><span>Fat</span><span>50 / 115 g</span></div><div class="bar"><i style="width:43%"></i></div></div>
+    <span class="mut">Show calories <span class="tg" style="display:inline-block;vertical-align:middle;transform:scale(.8)" aria-label="off"></span> off</span>
+    <div class="hl">
+      <span class="lbl">Next up</span>
+      <b>Pre-ride snack in 1 h 10 m · 80 g carbs · 15 g protein</b>
+      <div style="display:flex;align-items:center;gap:12px"><span class="btn pri">Log it</span><span class="lnk">Ideas ▸</span></div>
+    </div>
+    <div class="tl">
+      <div class="tli"><span class="tm">07:30</span><span class="dot g"></span><div class="grow"><b>Breakfast</b><small>100 g C · 30 g P · ✓ logged 🔒</small></div><span class="code">GREEN</span></div>
+      <div class="tli"><span class="tm">12:30</span><span class="dot g"></span><div class="grow"><b>Lunch</b><small>110 g C · 35 g P · ✓ logged 🔒</small></div><span class="code">GREEN</span></div>
+      <div class="tli"><span class="tm">15:30</span><span class="dot g"></span><div class="grow"><b>Pre-ride snack</b><small>80 g C · 15 g P</small></div><span class="code">GREEN</span></div>
+      <div class="tli ride"><span class="tm">17:30</span><span class="dot g"></span><div class="grow"><b>Ride: Threshold 3×12 ▸</b><small>1 h 45 · from Intervals.icu · fuel 50 g/h on the bike (about 90 g)</small></div><span class="code">GREEN</span></div>
+      <div class="tli"><span class="tm">19:45</span><span class="dot g"></span><div class="grow"><b>Recovery dinner</b><small>110 g C · 40 g P</small></div><span class="code">GREEN</span></div>
+    </div>
+    <small>⟳ Plan updated 14:02: ride moved from 18:00 to 17:30. Logged meals unchanged.</small>
+  </div>
+  <nav class="tabs"><div><span class="on"><i>◉</i>Today</span><span><i>▦</i>Week</span><span><i>＋</i>Log</span><span><i>○</i>Profile</span></div></nav>
+</div>
+<figcaption><b>2 · Today</b>Fixes: plan rewrites meals already eaten (Fuelin); targets jump without explanation (both). Logged meals lock, and every change says why.</figcaption>
+</figure>
+
+<!-- 3 Ride fueling plan -->
+<figure>
+<div class="phone">
+  <div class="sb"><span>9:41</span><span>▮▮▮ ◠ ▭</span></div>
+  <div class="scr">
+    <span class="back">‹ Today</span>
+    <div><h3>Threshold 3×12</h3><p class="sub">17:30 · 1 h 45 · planned 1,250 kJ · Intervals.icu</p></div>
+    <div class="sec">
+      <div class="sech"><b>Before</b><span class="mut in">15:30 · 2 h out</span></div>
+      <span class="tgt">80 g carbs · 15 g protein</span>
+      <small>Ideas: bagel with jam and a banana; or rice cakes and a yogurt.</small>
+      <div class="rule">1–4 g/kg, 1–4 h before. This plan: 1.1 g/kg.</div>
+    </div>
+    <div class="sec">
+      <div class="sech"><b>During</b><span class="mut in">17:30–19:15</span></div>
+      <span class="tgt">50 g carbs per hour · about 90 g total</span>
+      <small>Fluid 0.5–0.8 L per hour. Example: 2 bottles with 40 g mix each, plus 1 gel.</small>
+      <div class="rule">1–2.5 h session: 30–60 g/h.</div>
+    </div>
+    <div class="sec">
+      <div class="sech"><b>After</b><span class="mut in">19:45</span></div>
+      <span class="tgt">110 g carbs · 40 g protein</span>
+      <div class="rule">Protein 0.25–0.3 g/kg within 2 h.</div>
+    </div>
+    <div class="box">
+      <div class="row"><div class="grow" style="font-size:12px">Remind me: 15:30 snack, 17:25 bottles, 19:30 dinner</div><span class="tg on" aria-label="on"></span></div>
+      <div class="row"><div class="grow"><b style="font-size:12px">Why GREEN today ▸</b><small>1–3 h of moderate-to-hard training: 6–10 g/kg. You're set to 7 g/kg (490 g). Source: ACSM 2016.</small></div></div>
+    </div>
+    <div class="sec">
+      <b style="font-size:12px">How did fueling feel?</b>
+      <div class="chips"><span class="chip">Hungry</span><span class="chip">Good</span><span class="chip">Stomach upset</span></div>
+    </div>
+  </div>
+</div>
+<figcaption><b>3 · Ride fueling plan</b>Fixes: carb targets too low after hard sessions (Fuelin), and black-box numbers. Every target shows the rule behind it.</figcaption>
+</figure>
+
+<!-- 4 Week -->
+<figure>
+<div class="phone">
+  <div class="sb"><span>9:41</span><span>▮▮▮ ◠ ▭</span></div>
+  <div class="scr">
+    <h3>This week</h3>
+    <div class="box">
+      <div class="wrow"><span class="d">Mon</span><span class="pill a">AMBER</span><span>Endurance 60 min</span><span class="gr">350 g</span></div>
+      <div class="wrow today"><span class="d">Tue</span><span class="pill g">GREEN</span><span>Threshold 3×12, 1 h 45<small>Today</small></span><span class="gr">490 g</span></div>
+      <div class="wrow"><span class="d">Wed</span><span class="pill a">AMBER</span><span>Rest<small>Fueling up for Thursday's 3 h ride</small></span><span class="gr">320 g</span></div>
+      <div class="wrow"><span class="d">Thu</span><span class="pill g">GREEN</span><span>Endurance 3 h</span><span class="gr">560 g</span></div>
+      <div class="wrow"><span class="d">Fri</span><span class="pill rd">RED</span><span>Rest</span><span class="gr">250 g</span></div>
+      <div class="wrow"><span class="d">Sat</span><span class="pill g">GREEN</span><span>Group ride 4 h</span><span class="gr">630 g</span></div>
+      <div class="wrow"><span class="d">Sun</span><span class="pill a">AMBER</span><span>Run 45 min</span><span class="gr">330 g</span></div>
+    </div>
+    <small>Grams = daily carb target. GREEN high · AMBER moderate · RED low.</small>
+    <span class="btn blk">+ Add workout</span>
+    <small style="text-align:center">Runna, Zwift, a group ride: 10 seconds</small>
+  </div>
+  <nav class="tabs"><div><span><i>◉</i>Today</span><span class="on"><i>▦</i>Week</span><span><i>＋</i>Log</span><span><i>○</i>Profile</span></div></nav>
+</div>
+<figcaption><b>4 · Week</b>Fixes: rigid plans that need a scheduled workout (Hexis). Rest and unplanned days get a full plan, and quick-add covers apps we can't connect.</figcaption>
+</figure>
+
+<!-- 5 Log a meal -->
+<figure>
+<div class="phone">
+  <div class="sb"><span>9:41</span><span>▮▮▮ ◠ ▭</span></div>
+  <div class="scr">
+    <div><h3>Pre-ride snack · 15:30</h3><p class="sub">Target: 80 g carbs · 15 g protein</p></div>
+    <div class="search"><span class="field">⌕ Search foods</span><span class="sq" aria-label="barcode">▥</span></div>
+    <div class="chips"><span class="chip on">Recents</span><span class="chip">Favorites</span><span class="chip">Repeat yesterday</span><span class="chip">Quick add macros</span></div>
+    <div class="box">
+      <div class="row item"><b style="font-size:12px;align-self:flex-start">Plain bagel</b><div class="amt" style="align-self:stretch"><span class="inp">95</span><span class="inp">g ▾</span><span class="grow"></span><span>48 g C · 9 g P</span></div></div>
+      <div class="row item"><b style="font-size:12px;align-self:flex-start">Strawberry jam</b><div class="amt" style="align-self:stretch"><span class="inp">1</span><span class="inp">tbsp ▾</span><span class="grow"></span><span>13 g C</span></div></div>
+      <div class="row item"><b style="font-size:12px;align-self:flex-start">Banana</b><div class="amt" style="align-self:stretch"><span class="inp">1 medium</span><span class="inp">each ▾</span><span class="grow"></span><span>27 g C · 1 g P</span></div></div>
+      <div class="row item"><b style="font-size:12px;align-self:flex-start">Greek yogurt</b><div class="amt" style="align-self:stretch"><span class="inp">100</span><span class="inp">g ▾</span><span class="grow"></span><span>4 g C · 10 g P</span></div></div>
+    </div>
+    <div class="total"><span>92 g C / 80 · 20 g P / 15</span><span><span class="ok">✓</span> on target</span></div>
+    <span class="lnk">Edit macros by hand</span>
+    <span class="btn pri blk">Save · 15:24</span>
+  </div>
+  <nav class="tabs"><div><span><i>◉</i>Today</span><span><i>▦</i>Week</span><span class="on"><i>＋</i>Log</span><span><i>○</i>Profile</span></div></nav>
+</div>
+<figcaption><b>5 · Log a meal</b>Fixes: slow, inaccurate logging (Hexis's top complaint): missing units, broken scanner, wrong totals after edits. Fast paths first, any unit, manual override.</figcaption>
+</figure>
+
+<!-- 6 Meal ideas -->
+<figure>
+<div class="phone">
+  <div class="sb"><span>9:41</span><span>▮▮▮ ◠ ▭</span></div>
+  <div class="scr">
+    <span class="back">‹ Today</span>
+    <div><h3>Ideas for recovery dinner</h3><p class="sub">Target: 110 g C · 40 g P</p></div>
+    <div class="chips"><span class="chip on">Vegetarian 🔒</span><span class="chip on">No peanuts 🔒</span><span class="chip">Under 20 min</span></div>
+    <div class="rc"><div class="img"></div><div class="grow"><b>Tofu rice bowl with edamame</b><small>112 g C · 38 g P · 20 min</small></div></div>
+    <div class="rc"><div class="img"></div><div class="grow"><b>Lentil pasta with tomato and feta</b><small>105 g C · 41 g P · 15 min</small></div></div>
+    <div class="rc"><div class="img"></div><div class="grow"><b>Bean burrito plate</b><small>108 g C · 36 g P · 15 min</small></div></div>
+    <small>Diet and allergy filters always apply. They're rules, not suggestions.</small>
+  </div>
+</div>
+<figcaption><b>6 · Meal ideas</b>Fixes: recipes that ignore diet and allergens (Fuelin). These are hard filters.</figcaption>
+</figure>
+
+<!-- 7 Connections -->
+<figure>
+<div class="phone">
+  <div class="sb"><span>9:41</span><span>▮▮▮ ◠ ▭</span></div>
+  <div class="scr">
+    <span class="back">‹ Profile</span>
+    <h3>Connections</h3>
+    <div class="box">
+      <div class="row"><div class="ic">♥</div><div class="grow"><b>Apple Health</b><small>Sources: Garmin Connect, Strava, MyFitnessPal</small></div><span class="end"><span class="ok">✓</span> Synced 2 min ago</span></div>
+      <div class="row"><div class="ic">i</div><div class="grow"><b>Intervals.icu</b><small>6 workouts in the next 7 days</small></div><span class="end"><span class="ok">✓</span> Live</span></div>
+      <div class="row"><div class="ic">W</div><div class="grow"><b>WHOOP</b><small><span class="wk">⚠</span> Sign-in expired 3 h ago</small></div><span class="btn warn">Reconnect</span></div>
+      <div class="row"><div class="ic">TP</div><div class="grow"><b>TrainingPeaks</b><small>Calendar link</small></div><span class="end mut">Updated 6 h ago</span></div>
+    </div>
+    <span class="lbl">Needs a look</span>
+    <div class="box">
+      <div class="row"><span class="wk">⚠</span><div class="grow" style="font-size:12px">2 duplicate rides merged (Garmin + Strava)</div><span class="lnk end">Review ▸</span></div>
+      <div class="row"><span class="wk">⚠</span><div class="grow" style="font-size:12px">Weight 102.4 kg on 20 Oct ignored: 32 kg jump</div><span class="lnk end">Confirm or delete ▸</span></div>
+    </div>
+    <div class="box"><div class="row"><div class="grow" style="font-size:12px">Export my data (CSV)</div><span class="mut in">▸</span></div></div>
+  </div>
+  <nav class="tabs"><div><span><i>◉</i>Today</span><span><i>▦</i>Week</span><span><i>＋</i>Log</span><span class="on"><i>○</i>Profile</span></div></nav>
+</div>
+<figcaption><b>7 · Connections (Profile › Connections)</b>Fixes: silent sync failures, duplicate imports that can't be deleted (Fuelin), and a bad weight reading doubling targets (Hexis).</figcaption>
+</figure>
+
+</div>
+<p class="note foot">Not shown: onboarding steps 1 and 3 (profile, health screening), paywall with free trial (App Store billing), settings.</p>
+</div>
+</body>
+</html>
