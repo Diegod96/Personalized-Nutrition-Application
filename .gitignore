@@ -1,0 +1,14 @@
+# Xcode / Swift
+build/
+DerivedData/
+.build/
+*.xcresult
+xcuserdata/
+.DS_Store
+
+# Agent scratch
+.claude/
+tmp/
+
+# Supabase CLI
+supabase/.temp/
