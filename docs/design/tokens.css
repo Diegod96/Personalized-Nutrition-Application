@@ -1,0 +1,64 @@
+:root {
+  color-scheme: light;
+  --space-3xs: 2px; --space-2xs: 4px; --space-xs: 8px; --space-sm: 12px; --space-md: 16px; --space-lg: 24px; --space-xl: 40px; --space-2xl: 64px; --space-3xl: 96px; --space-4xl: 144px;
+  /* type steps: iOS Dynamic Type sizes at the default (Large) setting, 1px = 1pt. Fixed, never fluid; the app scales them with Dynamic Type */
+  --text-caption: 12px; --text-footnote: 13px; --text-subheadline: 15px; --text-callout: 16px; --text-body: 17px; --text-headline: 17px;
+  --text-title-3: 20px; --text-title-2: 22px; --text-title-1: 28px; --text-large-title: 34px;
+  --text-xs: var(--text-caption); --text-sm: var(--text-footnote); --text-md: var(--text-body); --text-lg: var(--text-title-3); --text-xl: var(--text-title-2); --text-2xl: var(--text-title-1); --text-3xl: var(--text-large-title);
+  --text-display-s: var(--text-title-1); --text-display: var(--text-large-title); --text-section: var(--text-title-2); --text-title: var(--text-headline); --text-lead: var(--text-callout);
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1); --ease-in: cubic-bezier(0.7, 0, 0.84, 0); --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --dur-micro: 120ms; --dur-short: 220ms; --dur-long: 420ms;
+  --color-error: oklch(52% 0.19 27); --color-success: oklch(18% 0.02 300); /* success is ink plus a check glyph: green means the GREEN code only */
+  --container: 1440px; --gutter: 64px; --gap-columns: 32px; --section-gap-s: 120px; --section-gap: 144px; --section-gap-l: 176px;
+  --z-base: 1; --z-raised: 10; --z-dropdown: 100; --z-sticky: 200; --z-sticky-nav: 300; --z-modal: 400; --z-toast: 500; --z-tooltip: 600;
+  --color-paper: oklch(95% 0.02 300); --color-paper-2: oklch(92% 0.03 300); --color-paper-3: oklch(89% 0.035 300);
+  --color-ink: oklch(18% 0.02 300); --color-ink-2: oklch(28% 0.03 300); --color-muted: oklch(46% 0.05 300);
+  --color-rule: oklch(84% 0.04 300); --color-rule-2: oklch(70% 0.08 295);
+  --color-accent: oklch(50% 0.25 290); --color-accent-deep: oklch(43% 0.22 290); --color-accent-soft: oklch(86% 0.08 295);
+  --color-accent-ink: oklch(97% 0.01 300); --color-focus: oklch(50% 0.25 290);
+  --font-display: "Outfit", ui-sans-serif, system-ui, sans-serif; --font-body: "Onest", ui-sans-serif, sans-serif;
+  --font-outlier: "JetBrains Mono", ui-monospace, monospace;
+  --radius-card: 16px; --radius-pill: 999px; --rule-hair: 1px;
+  --shadow-card: 0 1px 2px oklch(18% 0.02 300 / 0.06);
+  --shadow-knob: 0 1px 2px oklch(18% 0.02 300 / 0.2);
+  --tracking-display: -0.03em; --display-weight: 500;
+  /* app additions: link text, the three carb codes (fill + the ink set on it), device geometry */
+  --color-link: oklch(50% 0.25 290);
+  --color-code-green: oklch(69% 0.1 182); --color-code-green-ink: oklch(18% 0.02 300);
+  --color-code-amber: oklch(85% 0.13 82); --color-code-amber-ink: oklch(18% 0.02 300);
+  --color-code-red: oklch(45% 0.17 28); --color-code-red-ink: oklch(97% 0.01 300);
+  --radius-device: 55px; --radius-well: 16px; --radius-tile: 10px; --radius-slot: 12px;
+  --hit: 44px; --control-h: 44px; --control-h-lg: 50px; --switch-w: 51px; --switch-h: 31px;
+  --safe-top: 62px; --safe-bottom: 34px; --device-w: 402px; --device-h: 874px; --margin-screen: 16px;
+}
+
+/* Dark: Ultraviolet's night colourway, re-derived per dark-mode.md; hue never moves */
+[data-mode="dark"] {
+  color-scheme: dark;
+  --color-paper: oklch(14% 0.02 290); --color-paper-2: oklch(17.5% 0.025 290); --color-paper-3: oklch(21% 0.03 290);
+  --color-ink: oklch(92% 0.04 300); --color-ink-2: oklch(80% 0.05 300); --color-muted: oklch(68% 0.06 300);
+  --color-rule: oklch(28% 0.04 290); --color-rule-2: oklch(44% 0.07 292);
+  --color-accent: oklch(55% 0.25 290); --color-accent-deep: oklch(48% 0.24 290); --color-accent-soft: oklch(36% 0.09 293);
+  --color-accent-ink: oklch(97% 0.01 300); --color-focus: oklch(62% 0.22 290); --color-link: oklch(74% 0.15 293);
+  --color-error: oklch(68% 0.17 27); --color-success: oklch(92% 0.04 300);
+  --color-code-green: oklch(79% 0.1 182); --color-code-green-ink: oklch(14% 0.02 290);
+  --color-code-amber: oklch(89% 0.11 85); --color-code-amber-ink: oklch(14% 0.02 290);
+  --color-code-red: oklch(60% 0.16 28); --color-code-red-ink: oklch(14% 0.02 290);
+  --shadow-card: none;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-mode]) {
+    color-scheme: dark;
+    --color-paper: oklch(14% 0.02 290); --color-paper-2: oklch(17.5% 0.025 290); --color-paper-3: oklch(21% 0.03 290);
+    --color-ink: oklch(92% 0.04 300); --color-ink-2: oklch(80% 0.05 300); --color-muted: oklch(68% 0.06 300);
+    --color-rule: oklch(28% 0.04 290); --color-rule-2: oklch(44% 0.07 292);
+    --color-accent: oklch(55% 0.25 290); --color-accent-deep: oklch(48% 0.24 290); --color-accent-soft: oklch(36% 0.09 293);
+    --color-accent-ink: oklch(97% 0.01 300); --color-focus: oklch(62% 0.22 290); --color-link: oklch(74% 0.15 293);
+    --color-error: oklch(68% 0.17 27); --color-success: oklch(92% 0.04 300);
+    --color-code-green: oklch(79% 0.1 182); --color-code-green-ink: oklch(14% 0.02 290);
+    --color-code-amber: oklch(89% 0.11 85); --color-code-amber-ink: oklch(14% 0.02 290);
+    --color-code-red: oklch(60% 0.16 28); --color-code-red-ink: oklch(14% 0.02 290);
+    --shadow-card: none;
+  }
+}
