@@ -71,6 +71,8 @@ Every data region has loading, empty and error states. The mockups draw one of e
 | Meal ideas | Skeleton cards | *drawn*: no idea passes the filters, offer to drop the soft one | Couldn't load ideas: Retry |
 | Connections | "Checking…" per row | None connected: link to Connect your data | Per source, as drawn for WHOOP (Sign-in expired, Reconnect) |
 | Connect your data | Connect button busy | n/a | Connection refused: say which, Try again |
+| Goal weight | Skeleton stats and week rows | No goal: "Set a goal weight" | Fewer than 3 weigh-ins this week: keep last week's targets, say why |
+| Caffeine | Skeleton chart | Nothing logged: flat line, "No caffeine today" | Couldn't model: show doses as a list |
 
 ## SwiftUI mapping
 
@@ -128,7 +130,18 @@ Figures that compare take `.monospacedDigit()`. Whether Outfit and Onest ship ta
 | Amount and unit | `TextField` with `.keyboardType(.decimalPad)` and a `Menu` or `Picker(.menu)` |
 | Recipe card | `NavigationLink` with an `AsyncImage` in the 72 pt slot |
 | Loading, empty, error | `.redacted(reason: .placeholder)` skeletons, `ContentUnavailableView`, an inline notice with Retry |
+| Stat trio (Now, Goal, to go) | `Grid` of three `LabeledContent` columns parted by `Divider()` |
+| Pace picker | `Picker(selection:)` with `.pickerStyle(.segmented)`, selected segment tinted `Accent` |
+| Daily deficit rows | The Week row: `CarbCodeTag` plus `Text(kcal)` in `.monospacedDigit()`, shown only when Show calories is on |
+| Caffeine curve | Swift Charts: `AreaMark` + `LineMark` (`Accent`) from the Bateman model sampled every 5 min; `RectangleMark` for the ride window (`AccentSoft`); `RuleMark` for last call (dashed) and bedtime; `PointMark` for doses; `.accessibilityChartDescriptor` for VoiceOver |
+| Curve readings | `Grid` of time and mg pairs under the chart, the same values VoiceOver reads |
+| Caffeine card on Today | `NavigationLink` holding a sparkline `Chart` (axes hidden), the total and a warning tag |
+| Warning tag | `Label("Gel after last call", systemImage: "exclamationmark.triangle")` on a `Paper3` capsule, ink text, never a code colour |
 | Icons | SF Symbols: `chevron.left/right/down`, `lock.fill`, `checkmark`, `exclamationmark.triangle`, `arrow.triangle.2.circlepath`, `magnifyingglass`, `barcode.viewfinder`, `plus`, `heart`, `ruler`, `scope`, `calendar`, `plus.square`, `person` |
+
+## Caffeine model
+
+The curve is computed, never drawn by hand. One-compartment Bateman model, summed over doses: A(t) = D·ka/(ka−ke)·(e^(−ke·t) − e^(−ka·t)), ke = ln2 / half-life (5 h by default, adjustable 3–10 h), ka = 6.0 h⁻¹ (peak about 39 min after a dose). Last call = bedtime − 8.8 h for coffee-sized doses (Gardiner et al. 2023).
 
 ## Exports
 
