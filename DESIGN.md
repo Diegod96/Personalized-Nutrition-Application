@@ -14,7 +14,8 @@ The locked system. Every Hallmark run reads this first and every screen shares i
 ## Beta scope
 
 - Beta (free): the core loop (plan, suggest real food, log, revise only the meals still to come) and meal ideas.
-- After beta: Goal weight, Caffeine, the seven-day Week overview, food search and the barcode scanner, and subscriptions. Their frames stay in the mockups as the later design; each caption carries an "After beta" tag. The tag is a note on the sheet, not app UI.
+- Beta navigation: three tabs, Today, Log and Profile. A + on Today opens the quick-add workout sheet. The Week tab joins after the beta, making four.
+- After beta: Goal weight, Caffeine, the seven-day Week overview, food search and the barcode scanner, and subscriptions. Their frames stay in the mockups as the later design; each caption carries an "After beta" tag, and their tab bar shows the later four-tab app. The tag is a note on the sheet, not app UI.
 
 ## Example day
 
@@ -73,7 +74,7 @@ Both faces may be bundled in the app binary. Ship `OFL.txt` with them and don't 
 - Outfit Light (300) only at Title 3 (20 pt) and up. Figures at Callout or Body size use Outfit Medium.
 - Rule lines end with their source after a single middle dot ("· ACSM 2016"). Text actions never carry an arrow; a trailing chevron icon marks navigation, including a link that leaves the app ("Find one").
 - A badge (violet, count) sits on the Profile tab while a connection needs attention; the Profile hub repeats it as "1 needs attention".
-- Toolbar actions: Ride plan "Edit" opens a menu (Edit time and duration, Mark as key session, Delete for a manual workout or Hide for a synced one). Goal weight "Edit" changes the goal. Log's title is a menu of today's meals plus "Snack now".
+- Toolbar actions: Today's + opens the quick-add workout sheet (after the beta, Week's + opens it too). Ride plan "Edit" opens a menu (Edit time and duration, Mark as key session, Delete for a manual workout or Hide for a synced one). Goal weight "Edit" changes the goal. Log's title is a menu of today's meals plus "Snack now".
 - Logging has four states. Draft: editable foods, an "Eaten at" time apart from the meal's slot, and Log meal. Saving: "Saving…", repeat taps ignored. Saved: read-only foods, the eaten and logged times, Edit meal and Delete meal. Editing: "Edit pre-ride snack", Cancel, and Save changes, which updates the same meal ("Meal updated"). A failed save keeps the entries: "Couldn't save this meal. Your entries are still here." with Try again.
 - After logging, an inline confirmation at the top of the saved meal says what was logged and offers Undo and Dismiss. It has no timer. Offline it says "Saved on this phone, syncs later"; that is a saved meal, not an error.
 
@@ -176,7 +177,7 @@ Figures that compare take `.monospacedDigit()`. Whether Outfit and Onest ship ta
 | Switch | `Toggle(isOn:)` `.tint(Color("Accent"))` |
 | Filter chips | `Toggle` with `.toggleStyle(.button)` in a capsule style; locked diet chips are disabled, with `lock.fill` |
 | Primary / secondary button | `.buttonStyle(.borderedProminent)` / `.bordered`, `.buttonBorderShape(.capsule)`, `.controlSize(.large)` |
-| Tab bar | `TabView` with four `Tab`s, `.tint(Color("Link"))`; on iOS 26 the system draws the floating glass bar this capsule stands in for |
+| Tab bar | `TabView` with three `Tab`s in the beta (Today, Log, Profile) and four after it (Week after Today), `.tint(Color("Link"))`; on iOS 26 the system draws the floating glass bar this capsule stands in for |
 | Back link | `NavigationStack` back button, tinted `Link` |
 | Food search and scanner | `TextField` in a capsule (or `.searchable`) plus a `Button` with `barcode.viewfinder` |
 | Amount and unit | `TextField` with `.keyboardType(.decimalPad)` and a `Menu` or `Picker(.menu)` |
@@ -192,9 +193,9 @@ Figures that compare take `.monospacedDigit()`. Whether Outfit and Onest ship ta
 | Tab roots | Each tab is a `NavigationStack` with a large `.navigationTitle`; pushed screens use the inline title |
 | Profile hub | `List(.insetGrouped)` of `NavigationLink`s, the global `Toggle("Show calories")`, a footer `Text`; `.badge(1)` on the Profile `Tab` |
 | Code header link | `NavigationLink` wrapping `CarbCodeTag` and the day label, with a chevron, opening Why today's targets |
-| Why today's targets | A pushed `ScrollView` of sections: summary (targets, the reason, the plan's time), the day's sessions as `NavigationLink`s, the rule lines with sources, the meal split as `TimelineRow`s, looking ahead, and inputs. Opened from the code header link, a Week day and the session's Why row; back returns to where it came from |
+| Why today's targets | A pushed `ScrollView` of sections: summary (targets, the reason, the plan's time), the day's sessions as `NavigationLink`s, the rule lines with sources, the meal split as `TimelineRow`s, looking ahead, and inputs. Opened from the code header link and the session's Why row (and a Week day after the beta); back returns to where it came from |
 | Toolbar menus | `ToolbarItem(placement: .topBarTrailing) { Menu("Edit") { … } }`; Log's title is a `Menu` in `.toolbarTitleMenu` |
-| Quick-add workout | `.sheet` with `.presentationDetents([.medium, .large])`: segmented `Picker`s for sport and effort, `DatePicker` for start, a duration `Picker`, Save. Large at accessibility sizes; the form scrolls and Cancel and Save stay visible |
+| Quick-add workout | Opened from the `+` `ToolbarItem` on Today. `.sheet` with `.presentationDetents([.medium, .large])`: segmented `Picker`s for sport and effort, `DatePicker` for start, a duration `Picker`, Save. Large at accessibility sizes; the form scrolls and Cancel and Save stay visible |
 | Log confirmation | An inline `HStack` at the top of the saved meal with Undo and Dismiss, not a timed overlay. It stays until dismissed and is announced once with `AccessibilityNotification.Announcement` |
 | Goal sheet | `.sheet` with a decimal `TextField` (kg), the pace `Picker`, inline validation text and the eligibility notice; the form scrolls |
 | Caffeine readings | Each time-and-mg reading is its own element ("22:30, 63 mg"), not one long utterance; the chart carries `.accessibilityChartDescriptor` built from the same samples |
