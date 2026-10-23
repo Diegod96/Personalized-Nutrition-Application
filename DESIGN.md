@@ -39,18 +39,43 @@ Both faces may be bundled in the app binary. Ship `OFL.txt` with them and don't 
 
 ## Carb codes (semantic, never decorative)
 
-- Each code is a tag with three parts: the fill, a level glyph (three bars, filled 3/2/1 for GREEN/AMBER/RED) and the word. Never the colour alone.
-- Two weights: the filled tag for the day (Today's header, Week, the legend) and a quiet tag for each meal on Today's timeline (a 32% tint of the code colour with the word and bars in ink), so meal names lead.
+- Each code is a tag with three parts: the fill, a level glyph (three bars: filled bars for the level, outlined bars for the rest, 3/2/1 for GREEN/AMBER/RED) and the word. Never the colour alone.
+- Two weights: the filled tag for a day (Today's header, Week, Goal weight, the legends) and a quiet tag for a meal. A meal shows its tag only when its code differs from the day's code. The quiet tag is the code colour mixed 32% into paper, the word and bars in ink, with a 1 pt hairline of the code colour mixed 60% into ink.
 - The colours mean the carb code and nothing else. Success is ink plus a check. Sync warnings are ink plus a triangle. Toggles, progress and selection use the violet, which sits at hue 290 and is never mistaken for a code.
-- Text contrast (WCAG 2): GREEN 7.13:1 light, 10.76:1 dark. AMBER 11.82:1 light, 14.28:1 dark. RED 7.43:1 light, 4.68:1 dark. All pass AA.
-- Colour blindness: GREEN leans blue-green, so under deuteranopia it reads grey-blue while AMBER reads yellow and RED reads dark olive. Luminance steps under deuteranopia: light AMBER/RED 4.57, GREEN/RED 2.48, GREEN/AMBER 1.85. Dark: 2.77, 1.91, 1.45. The low pairs rely on the blue-yellow difference and on the bar glyph.
+- Text contrast on the filled tag (WCAG 2): GREEN 7.13:1 light, 7.82:1 dark. AMBER 11.82:1 light, 14.28:1 dark. RED 7.43:1 light, 4.68:1 dark. Quiet tag, ink on the tint: GREEN 12.72 / 9.83, AMBER 14.73 / 7.85, RED 9.53 / 11.38 (light / dark). All pass AA.
+- Luminance step GREEN/AMBER: 1.66 light, 1.83 dark (at least 1.4 in both modes).
+- Colour blindness: GREEN leans blue-green, so under deuteranopia it reads grey-blue while AMBER reads yellow and RED reads dark olive. Luminance steps under deuteranopia: light AMBER/RED 4.57, GREEN/RED 2.48, GREEN/AMBER 1.85. Dark: 2.77, 1.38, 2.01. The low pairs (dark GREEN/RED most of all) rely on hue (grey-blue against olive), the bar glyph and the word.
 
 ## Controls
 
 - Primary: violet fill, `--color-accent-ink` text, capsule, 44 pt (50 pt full width). One per screen.
 - Secondary: 1.5 pt ink stroke, capsule, same heights. Text actions are violet text with no arrow; chevrons only mark rows that navigate.
 - Every hit target is 44 pt or more. Chips and the unit menu are 36 pt tall, and text actions inside rows (Review, Try again) are 24 pt tall; their hit areas extend to 44.
-- Logged meals show a check, "logged" and a lock. Calories stay hidden until "Show calories" is switched on.
+- Logged meals show a check, "logged" and a lock. Calories stay hidden until the one global "Show calories" switch in Profile is on; Today has no calorie row.
+- Segmented controls use the system look: a `Paper3` track, the selected segment on `SegSelected` with ink text and a soft shadow, never a violet fill. A change applies at once (no Save).
+- Progress tracks are `Paper3` with a 1 pt `Rule2` stroke (2.97:1 on light paper, 2.51:1 on dark).
+- Outfit Light (300) only at Title 3 (20 pt) and up. Figures at Callout or Body size use Outfit Medium.
+- Rule lines end with their source after a single middle dot ("· ACSM 2016"). Text actions never carry an arrow; a trailing chevron icon marks navigation, including a link that leaves the app ("Find one").
+- A badge (violet, count) sits on the Profile tab while a connection needs attention; the Profile hub repeats it as "1 needs attention".
+- Toolbar actions: Ride plan "Edit" opens a menu (Edit time and duration, Mark as key session, Delete for a manual workout or Hide for a synced one). Goal weight "Edit" changes the goal. Log's title is a menu of today's meals plus "Snack now".
+- After Save, a toast says what was logged and offers Undo; offline it says "Saved on this phone, syncs later".
+
+## Increase Contrast
+
+With Increase Contrast on (`colorSchemeContrast == .increased`):
+- hairlines use `Rule2` instead of `Rule`;
+- progress tracks fill with `Rule2` at 40% under the stroke;
+- quiet tags mix the code colour 60% into paper. Their text stays ink (light 10.13 / 13.49 / 5.56; dark GREEN 5.04, RED 7.06), except dark AMBER, which takes `CodeAmberInk` (4.83, where ink would be 3.23).
+
+## AX sizes
+
+At accessibility sizes (`dynamicTypeSize.isAccessibilitySize`) the layout reflows. The mockups draw Today at AX3 (Body 40, Title 1 48, Footnote 33):
+- the meter pair and the stat trio go single column;
+- Week and Goal rows stack: day and tag on one line, then workout and grams;
+- the Today header uses `ViewThatFits` (date and code tag in one row, else stacked);
+- the readings grid becomes a list;
+- the caffeine chart's x-axis strides every 12 h;
+- the tab bar keeps its size and relies on the large content viewer.
 
 ## Motion
 
@@ -71,7 +96,9 @@ Every data region has loading, empty and error states. The mockups draw one of e
 | Meal ideas | Skeleton cards | *drawn*: no idea passes the filters, offer to drop the soft one | Couldn't load ideas: Retry |
 | Connections | "Checking…" per row | None connected: link to Connect your data | Per source, as drawn for WHOOP (Sign-in expired, Reconnect) |
 | Connect your data | Connect button busy | n/a | Connection refused: say which, Try again |
-| Goal weight | Skeleton stats and week rows | No goal: "Set a goal weight" | Fewer than 3 weigh-ins this week: keep last week's targets, say why |
+| Log: save | Save button busy | n/a | Offline: "Saved on this phone, syncs later" (drawn as the toast inset) |
+| Goal weight | Skeleton stats and week rows | *drawn*: "Set a goal weight" | Fewer than 3 weigh-ins this week: keep last week's targets, say why. *Drawn*: goal paused after 2 weeks of low intake against training |
+| Profile | n/a | n/a | A connection needs attention: badge on the tab and the row |
 | Caffeine | Skeleton chart | Nothing logged: flat line, "No caffeine today" | Couldn't model: show doses as a list |
 
 ## SwiftUI mapping
@@ -83,12 +110,13 @@ Every data region has loading, empty and error states. The mockups draw one of e
 | `--color-paper` / `-2` / `-3` | `Paper`, `Paper2`, `Paper3` | #F0ECFA, #E7E1F6, #DED6EF | #090811, #100F1B, #181625 |
 | `--color-ink` / `-2` | `Ink`, `Ink2` | #131019, #2B2636 | #E8DFFC, #C2B7DA |
 | `--color-muted` | `Muted` | #5C5270 | #9E90B8 |
-| `--color-rule` / `-2` | `Rule`, `Rule2` | #CEC5E1, #A295CB | #28253B, #534B76 |
+| `--color-rule` / `-2` | `Rule`, `Rule2` | #CEC5E1, #8F83B8 | #28253B, #534B76 |
 | `--color-accent` / `-deep` / `-soft` | `Accent`, `AccentDeep`, `AccentSoft` | #6B2AE3, #571DBC, #D4C7FF* | #783FF5, #6527D7, #403267 |
 | `--color-accent-ink` | `AccentInk` | #F6F4FB | #F6F4FB |
 | `--color-focus` / `--color-link` | `Focus`, `Link` | #6B2AE3, #6B2AE3 | #8A63FE, #AF97FF* |
+| `--color-seg-selected` | `SegSelected` | #F9F7FD | #2D2B3E |
 | `--color-error` / `--color-success` | `Error`, `Success` | #BE2323, #131019 | #EF675C, #E8DFFC |
-| `--color-code-green` / `-ink` | `CodeGreen`, `CodeGreenInk` | #45B0A0, #131019 | #68D0BF, #090811 |
+| `--color-code-green` / `-ink` | `CodeGreen`, `CodeGreenInk` | #45B0A0, #131019 | #49B3A3, #090811 |
 | `--color-code-amber` / `-ink` | `CodeAmber`, `CodeAmberInk` | #F8C562, #131019 | #FCD583, #090811 |
 | `--color-code-red` / `-ink` | `CodeRed`, `CodeRedInk` | #9E1614, #F6F4FB | #CE5247, #090811 |
 
@@ -131,12 +159,21 @@ Figures that compare take `.monospacedDigit()`. Whether Outfit and Onest ship ta
 | Recipe card | `NavigationLink` with an `AsyncImage` in the 72 pt slot |
 | Loading, empty, error | `.redacted(reason: .placeholder)` skeletons, `ContentUnavailableView`, an inline notice with Retry |
 | Stat trio (Now, Goal, to go) | `Grid` of three `LabeledContent` columns parted by `Divider()` |
-| Pace picker | `Picker(selection:)` with `.pickerStyle(.segmented)`, selected segment tinted `Accent` |
-| Daily deficit rows | The Week row: `CarbCodeTag` plus `Text(kcal)` in `.monospacedDigit()`, shown only when Show calories is on |
+| Pace picker | `Picker(selection:)` with `.pickerStyle(.segmented)` in the system look (not tinted), one line per segment; the footnote says "0.5% (recommended)"; a change applies at once |
+| Daily plan rows | The Week row: `CarbCodeTag` plus words ("Lighter", "Hard day: fuel in full"); with Show calories on, "500 kcal under maintenance" |
 | Caffeine curve | Swift Charts: `AreaMark` + `LineMark` (`Accent`) from the Bateman model sampled every 5 min; `RectangleMark` for the ride window (`AccentSoft`); `RuleMark` for last call (dashed) and bedtime; `PointMark` for doses; `.accessibilityChartDescriptor` for VoiceOver |
 | Curve readings | `Grid` of time and mg pairs under the chart, the same values VoiceOver reads |
 | Caffeine card on Today | `NavigationLink` holding a sparkline `Chart` (axes hidden), the total and a warning tag |
 | Warning tag | `Label("Gel after last call", systemImage: "exclamationmark.triangle")` on a `Paper3` capsule, ink text, never a code colour |
+| Tab roots | Each tab is a `NavigationStack` with a large `.navigationTitle`; pushed screens use the inline title |
+| Profile hub | `List(.insetGrouped)` of `NavigationLink`s, the global `Toggle("Show calories")`, a footer `Text`; `.badge(1)` on the Profile `Tab` |
+| Code header link | `NavigationLink` wrapping `CarbCodeTag` and the day label, with a chevron, opening Why GREEN today |
+| Toolbar menus | `ToolbarItem(placement: .topBarTrailing) { Menu("Edit") { … } }`; Log's title is a `Menu` in `.toolbarTitleMenu` |
+| Quick-add workout | `.sheet` with `.presentationDetents([.medium, .large])`: segmented `Picker`s for sport and effort, `DatePicker` for start, a duration `Picker`, Save |
+| Toast | A bottom overlay `HStack` with Undo, dismissed after a few seconds, announced with `AccessibilityNotification.Announcement` |
+| Goal sheet | `.sheet` with a decimal `TextField` (kg), the pace `Picker`, inline validation text and the eligibility notice |
+| Caffeine readings | One combined accessibility element (`.accessibilityElement(children: .combine)`), and the chart carries `.accessibilityChartDescriptor` |
+| Quick-add caffeine | A row of `Button`s in a capsule style (Coffee, Espresso, Tea, Gel) |
 | Icons | SF Symbols: `chevron.left/right/down`, `lock.fill`, `checkmark`, `exclamationmark.triangle`, `arrow.triangle.2.circlepath`, `magnifyingglass`, `barcode.viewfinder`, `plus`, `heart`, `ruler`, `scope`, `calendar`, `plus.square`, `person` |
 
 ## Caffeine model
