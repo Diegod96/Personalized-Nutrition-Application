@@ -161,10 +161,10 @@ Figures that compare take `.monospacedDigit()`. Whether Outfit and Onest ship ta
 | Stat trio (Now, Goal, to go) | `Grid` of three `LabeledContent` columns parted by `Divider()` |
 | Pace picker | `Picker(selection:)` with `.pickerStyle(.segmented)` in the system look (not tinted), one line per segment; the footnote says "0.5% (recommended)"; a change applies at once |
 | Daily plan rows | The Week row: `CarbCodeTag` plus words ("Lighter", "Hard day: fuel in full"); with Show calories on, "500 kcal under maintenance" |
-| Caffeine curve | Swift Charts: `AreaMark` + `LineMark` (`Accent`) from the Bateman model sampled every 5 min; `RectangleMark` for the ride window (`AccentSoft`); `RuleMark` for last call (dashed) and bedtime; `PointMark` for doses; `.accessibilityChartDescriptor` for VoiceOver |
+| Caffeine curve | Swift Charts: `AreaMark` + `LineMark` (`Accent`) from the Bateman model sampled every 5 min; `RectangleMark` for the ride window (`AccentSoft`); `RuleMark` for last caffeine (dashed) and bedtime; `PointMark` for doses; `.accessibilityChartDescriptor` for VoiceOver |
 | Curve readings | `Grid` of time and mg pairs under the chart, the same values VoiceOver reads |
 | Caffeine card on Today | `NavigationLink` holding a sparkline `Chart` (axes hidden), the total and a warning tag |
-| Warning tag | `Label("Gel after last call", systemImage: "exclamationmark.triangle")` on a `Paper3` capsule, ink text, never a code colour |
+| Warning tag | `Label("Gel after last caffeine", systemImage: "exclamationmark.triangle")` on a `Paper3` capsule, ink text, never a code colour |
 | Tab roots | Each tab is a `NavigationStack` with a large `.navigationTitle`; pushed screens use the inline title |
 | Profile hub | `List(.insetGrouped)` of `NavigationLink`s, the global `Toggle("Show calories")`, a footer `Text`; `.badge(1)` on the Profile `Tab` |
 | Code header link | `NavigationLink` wrapping `CarbCodeTag` and the day label, with a chevron, opening Why GREEN today |
