@@ -14,7 +14,7 @@ The locked system. Every Hallmark run reads this first and every screen shares i
 ## Beta scope
 
 - Beta (free): the core loop (plan, suggest real food, log, revise only the meals still to come) and meal ideas.
-- Beta navigation: three tabs, Today, Log and Profile. A + on Today opens the quick-add workout sheet. The Week tab joins after the beta, making four.
+- Beta navigation: three tabs, Today, Log and Profile. A + on Today opens the quick-add workout sheet. The Week tab joins after the beta, making four. Beta screens never show an after-beta feature: Today has no Caffeine card, Profile has no Goal weight or caffeine rows, and Log has no food search or barcode scanner.
 - After beta: Goal weight, Caffeine, the seven-day Week overview, food search and the barcode scanner, and subscriptions. Their frames stay in the mockups as the later design; each caption carries an "After beta" tag, and their tab bar shows the later four-tab app. The tag is a note on the sheet, not app UI.
 
 ## Example day
@@ -26,7 +26,8 @@ Every screen draws one Tuesday from engine v1, which uses the ACSM guideline ban
 - Protein 112 g (1.6 g/kg), 28 g at each of the four meals; 21 g of dinner's 28 g is the recovery protein (0.3 g/kg). No fat target and no calories until the engine has an energy baseline.
 - Today at 14:20: breakfast and lunch logged as planned, so 262 g carbs and 56 g protein are eaten. Reminders: 15:30 snack, 17:25 bottles, 19:30 for the 19:45 dinner.
 - Other days: rest 210 g (RED); up to 1 h 420 g (AMBER); over 1 h up to 4 h 560 g (GREEN); over 4 h 700 g (GREEN). A rest day before a long ride takes 70 g from that ride day: Wednesday 280 g (AMBER), Thursday 490 g.
-- On target: a meal is on target when each macro is within 5 g or 10% of its target, whichever is larger; a day when it is within 10 g or 5%. Outside that, say the difference plainly ("Carbs 26 g above the target") with no check and no warning. The tolerance is a proposal waiting on dietitian sign-off.
+- On target: a meal is on target when each macro is within 5 g or 10% of its target, whichever is larger; a day when it is within 10 g or 5%. Outside that, say the difference plainly ("Carbs 26 g above the target") with no check and no warning. The tolerance is a proposal waiting on dietitian sign-off. Exceptions: a target of 0 g matches only 0 g; a missing target means no comparison at all; comparisons use unrounded values; and a timing or safety conflict blocks "on target" even when the grams fit.
+- Display: grams are whole numbers, halves rounding up. Meal and slot grams are reconciled to the rounded day total by largest remainder. Rates show one decimal (55.5 g/h), and a total from a rate uses the unrounded rate times the duration. Logged amounts keep their recorded precision and are never adjusted to make a screen add up.
 
 ## Tokens
 
@@ -77,6 +78,9 @@ Both faces may be bundled in the app binary. Ship `OFL.txt` with them and don't 
 - Toolbar actions: Today's + opens the quick-add workout sheet (after the beta, Week's + opens it too). Ride plan "Edit" opens a menu (Edit time and duration, Mark as key session, Delete for a manual workout or Hide for a synced one). Goal weight "Edit" changes the goal. Log's title is a menu of today's meals plus "Snack now".
 - Logging has four states. Draft: editable foods, an "Eaten at" time apart from the meal's slot, and Log meal. Saving: "Saving…", repeat taps ignored. Saved: read-only foods, the eaten and logged times, Edit meal and Delete meal. Editing: "Edit pre-ride snack", Cancel, and Save changes, which updates the same meal ("Meal updated"). A failed save keeps the entries: "Couldn't save this meal. Your entries are still here." with Try again.
 - After logging, an inline confirmation at the top of the saved meal says what was logged and offers Undo and Dismiss. It has no timer. Offline it says "Saved on this phone, syncs later"; that is a saved meal, not an error.
+- Switching meals from Log's title menu keeps each meal's draft; a draft goes only when you choose Discard. A draft with no foods, an empty or zero amount, or an amount that isn't a number can't be logged: Log meal stays disabled and the row says why ("Enter an amount").
+- Undo reverts only the save or edit it names. Once the meal has been edited again, the earlier Undo is gone; Edit meal and Delete meal in the saved meal stay available.
+- After a log, Today shows what was eaten in that meal's row, moves Next up on, and replans only meals still to come, saying why ("Updated after your snack at 15:26: dinner is now 132 g C and 27 g P"). Earlier logged meals don't change.
 
 ## Increase Contrast
 
@@ -87,7 +91,7 @@ With Increase Contrast on (`colorSchemeContrast == .increased`):
 
 ## AX sizes
 
-At accessibility sizes (`dynamicTypeSize.isAccessibilitySize`) the layout reflows. The mockups draw Today at AX3 (Body 40, Title 1 48, Footnote 33); the app supports every size up to AX5:
+At accessibility sizes (`dynamicTypeSize.isAccessibilitySize`) the layout reflows. The mockups draw Today at AX3 (Body 40, Title 1 48, Footnote 33) and AX5 (Body 53, Title 1 58, Footnote 44); the app supports every size up to AX5:
 - every screen scrolls, and no text is capped, truncated or shrunk to fit;
 - buttons and source citations wrap;
 - the stat trio goes single column;
@@ -99,6 +103,13 @@ At accessibility sizes (`dynamicTypeSize.isAccessibilitySize`) the layout reflow
 - the readings grid becomes a list;
 - the caffeine chart's x-axis strides every 12 h, and its labels move to an event list under the chart;
 - the tab bar keeps its size and relies on the large content viewer.
+
+## Focus and announcements
+
+- Sheets: VoiceOver focus starts on the sheet's title; on dismiss it returns to the control that opened the sheet. Cancel is always visible. The keyboard dismisses with a swipe down on the form or Done on the keyboard toolbar, and never hides Save.
+- Validation: after Save, errors are announced once (`AccessibilityNotification.Announcement`), and focus moves to the first field with an error, whose message sits right under it.
+- Plan updates: when the plan changes under the screen, focus and scroll position stay on the same row, matched by meal identity, not by position. "Plan updated" is announced once, and rows don't animate their reorder.
+- Next up actions carry the meal in their accessible name: "Log pre-ride snack", "Ideas for pre-ride snack".
 
 ## Motion
 
@@ -114,7 +125,7 @@ Every data region has loading, empty and error states. The mockups draw one of e
 | Today: Next up | Skeleton card | Nothing left today: the card hides | Uses the timeline's error |
 | Ride fueling plan | Skeleton lanes | n/a (opened from a planned ride) | Workout removed upstream: say so, back to Today |
 | Week | Skeleton rows | Never empty: every day gets a target | *drawn*: Intervals.icu unreachable, cached plan stays, Try again |
-| Log: food search | Spinner in the field's right slot | No match: offer Quick add macros | Offline: search saved foods only, say so |
+| Log: food search (after beta) | Spinner in the field's right slot | No match: offer Quick add macros | Offline: search saved foods only, say so |
 | Log: meal items | n/a | Nothing added: Recents leads | Save failed: keep the entries, Retry |
 | Meal ideas | Skeleton cards | *drawn*: no idea passes the filters, offer to drop the soft one | Couldn't load ideas: Retry |
 | Connections | "Checking…" per row | None connected: link to Connect your data | Per source, as drawn for WHOOP (Sign-in expired, Reconnect) |
@@ -170,7 +181,7 @@ Figures that compare take `.monospacedDigit()`. Whether Outfit and Onest ship ta
 | Carb code tag | `CarbCodeTag(code:)`: `HStack { LevelBars(level:); Text(code.word) }` on `Capsule().fill(Color("CodeGreen"))` |
 | Level glyph | `LevelBars`: three `RoundedRectangle`s, filled for the level and stroked with a 1 pt outline for the rest (never faded), as in Carb codes. Hidden from VoiceOver; the tag reads "GREEN, high carb day" |
 | Targets (carbs, protein) | `ProgressView(value:total:)` with a capsule `ProgressViewStyle` tinted `Accent`. No fat meter until the engine has a fat target. One VoiceOver element per nutrient: "Carbs, 262 of 560 grams, 298 to go". The fill stops at full; the numbers still say how far over |
-| Next up | `VStack` of title, time, targets and two `Button`s (Log it, Ideas) that VoiceOver reaches one by one; at AX sizes the buttons stack; the countdown isn't announced as it changes |
+| Next up | `VStack` of title, time, targets and two `Button`s (Log it, Ideas) that VoiceOver reaches one by one, named for the meal ("Log pre-ride snack"); after the snack is logged it becomes the ride, with a Ride plan button; at AX sizes the buttons stack; the countdown isn't announced as it changes |
 | Fuel timeline | `LazyVStack` of `TimelineRow`; the ride row is a `NavigationLink` on an `AccentSoft` background. VoiceOver reads time, meal, targets or what was eaten, and "logged" |
 | Ride lanes | `Grid` with one `GridRow` per lane (time rail, target, rule line with SF Symbol `ruler`) |
 | Grouped rows | `List` `.insetGrouped` with `listRowBackground(Color("Paper2"))`, or a `VStack` with `Divider()` |
@@ -179,7 +190,7 @@ Figures that compare take `.monospacedDigit()`. Whether Outfit and Onest ship ta
 | Primary / secondary button | `.buttonStyle(.borderedProminent)` / `.bordered`, `.buttonBorderShape(.capsule)`, `.controlSize(.large)` |
 | Tab bar | `TabView` with three `Tab`s in the beta (Today, Log, Profile) and four after it (Week after Today), `.tint(Color("Link"))`; on iOS 26 the system draws the floating glass bar this capsule stands in for |
 | Back link | `NavigationStack` back button, tinted `Link` |
-| Food search and scanner | `TextField` in a capsule (or `.searchable`) plus a `Button` with `barcode.viewfinder` |
+| Food search and scanner (after beta) | `TextField` in a capsule (or `.searchable`) plus a `Button` with `barcode.viewfinder` |
 | Amount and unit | `TextField` with `.keyboardType(.decimalPad)` and a `Menu` or `Picker(.menu)` |
 | Recipe card | `NavigationLink` with an `AsyncImage` in the 72 pt slot |
 | Loading, empty, error | `.redacted(reason: .placeholder)` skeletons, `ContentUnavailableView`, an inline notice with Retry |
@@ -193,7 +204,7 @@ Figures that compare take `.monospacedDigit()`. Whether Outfit and Onest ship ta
 | Tab roots | Each tab is a `NavigationStack` with a large `.navigationTitle`; pushed screens use the inline title |
 | Profile hub | `List(.insetGrouped)` of `NavigationLink`s, the global `Toggle("Show calories")`, a footer `Text`; `.badge(1)` on the Profile `Tab` |
 | Code header link | `NavigationLink` wrapping `CarbCodeTag` and the day label, with a chevron, opening Why today's targets |
-| Why today's targets | A pushed `ScrollView` of sections: summary (targets, the reason, the plan's time), the day's sessions as `NavigationLink`s, the rule lines with sources, the meal split as `TimelineRow`s, looking ahead, and inputs. Opened from the code header link and the session's Why row (and a Week day after the beta); back returns to where it came from |
+| Why today's targets | A pushed `ScrollView` of sections: summary (targets, the reason, the plan's time), the day's sessions as `NavigationLink`s, the rule lines with sources, the meal split as `TimelineRow`s, looking ahead, and inputs. Opened from the code header link and the session's Why row (and a Week day after the beta). Back returns to the screen that opened it (Today, the ride plan or Week), with its date and scroll position kept |
 | Toolbar menus | `ToolbarItem(placement: .topBarTrailing) { Menu("Edit") { … } }`; Log's title is a `Menu` in `.toolbarTitleMenu` |
 | Quick-add workout | Opened from the `+` `ToolbarItem` on Today. `.sheet` with `.presentationDetents([.medium, .large])`: segmented `Picker`s for sport and effort, `DatePicker` for start, a duration `Picker`, Save. Large at accessibility sizes; the form scrolls and Cancel and Save stay visible |
 | Log confirmation | An inline `HStack` at the top of the saved meal with Undo and Dismiss, not a timed overlay. It stays until dismissed and is announced once with `AccessibilityNotification.Announcement` |
