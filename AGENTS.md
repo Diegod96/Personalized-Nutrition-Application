@@ -35,7 +35,7 @@ Rules:
 
 ## Milestones and releases
 
-- `main` is the only long-lived branch. Each issue gets a short-lived `feature/<n>-<slug>` branch off `main`, created when work on the issue starts and merged by PR.
+- `main` is the only long-lived branch. Each feature issue gets a short-lived `feature/<n>-<slug>` branch off `main`, created when work on the issue starts and merged by PR.
 - GitHub milestones track the plan: P0 (access and reviews) → B0 (scope, scaffold, contracts) → B1 (local loop) → B2 (connected loop) → B3 (external TestFlight beta) → A1 (after the beta) → L (later).
 - When a milestone is done, close it and tag `main` with its name (for example `b0`).
 - Cut `release/beta` from `main` when the B3 build goes to external TestFlight, and `release/1.0` at the App Store code freeze.

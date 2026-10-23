@@ -147,7 +147,7 @@ The guidelines above give ranges. Hexis and Fuelin don't publish how they choose
    - Never above the athlete's own gut-trained maximum.
    - If a coach set `carbs_per_hour` on the Intervals.icu event, use it, within the same safety cap.
 4. **Before** (sessions over 60 min): 1 g/kg by default. Use 2 g/kg for sessions over 2.5 h or races when the meal is at least 2 h before the start. Never more than 1 g/kg per hour of lead time, or 4 g/kg in total. This stays inside the ACSM 1–4 g/kg range and keeps the pre-session meal a realistic size. The per-hour cap is an app choice: ACSM doesn't tie grams to hours.
-5. **After:** if there are less than 8 h of recovery before the next fuel-demanding session (ACSM 2016, Table 2), 1.0 g/kg per hour for the first 4 h (1.2 if the next session is key). Otherwise the recovery meal is its share of the day target. Protein at least 0.3 g/kg.
+5. **After:** only when both the session just finished and the next one are fuel-demanding and there are less than 8 h of recovery between them (ACSM 2016, Table 2: "<8 h recovery between 2 fuel demanding sessions"), 1.0 g/kg per hour for the first 4 h (1.2 if the next session is key). Otherwise the recovery meal is its share of the day target. Protein at least 0.3 g/kg.
 6. **Everything else:** day target − before − during − after, spread across the remaining meals.
 
 **Tuesday from the wireframes, v1 (guideline bands only)** (70 kg; Threshold 3×12, 17:30–19:15, 1 h 45; 1,250 kJ; IF 0.82; pre-ride snack 15:30; breakfast, lunch and dinner; next session at least 8 h away; not a key session). The wireframes use these numbers.
