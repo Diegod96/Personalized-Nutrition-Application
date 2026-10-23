@@ -11,6 +11,22 @@ The locked system. Every Hallmark run reads this first and every screen shares i
 - Modes: light (lavender) and dark (night), from one token set; the hue never moves between modes
 - Kept from the theme: the palette, Outfit over Onest, pill controls, 16 pt wells, hairline rows. Not kept: the all-lowercase voice. Labels are engine output and brand names (Intervals.icu, WHOOP), so they stay as written.
 
+## Beta scope
+
+- Beta (free): the core loop (plan, suggest real food, log, revise only the meals still to come) and meal ideas.
+- After beta: Goal weight, Caffeine, the seven-day Week overview, food search and the barcode scanner, and subscriptions. Their frames stay in the mockups as the later design; each caption carries an "After beta" tag. The tag is a note on the sheet, not app UI.
+
+## Example day
+
+Every screen draws one Tuesday from engine v1, which uses the ACSM guideline bands only (the kJ-based carb-cost estimate is deferred). Numbers on different screens must add up to it.
+
+- A 70 kg cyclist. Threshold 3×12 ride 17:30–19:15 (1 h 45, planned 1,250 kJ, IF 0.82), not key; the next session is more than 8 h away.
+- Day: 560 g carbs, the middle of 6–10 g/kg, GREEN. Pre-ride snack 70 g at 15:30. During 55.5 g/h, about 97 g. Breakfast, lunch and dinner 131 g each (70 + 97 + 393 = 560).
+- Protein 112 g (1.6 g/kg), 28 g at each of the four meals; 21 g of dinner's 28 g is the recovery protein (0.3 g/kg). No fat target and no calories until the engine has an energy baseline.
+- Today at 14:20: breakfast and lunch logged as planned, so 262 g carbs and 56 g protein are eaten. Reminders: 15:30 snack, 17:25 bottles, 19:30 for the 19:45 dinner.
+- Other days: rest 210 g (RED); up to 1 h 420 g (AMBER); over 1 h up to 4 h 560 g (GREEN); over 4 h 700 g (GREEN). A rest day before a long ride takes 70 g from that ride day: Wednesday 280 g (AMBER), Thursday 490 g.
+- On target: a meal is on target when each macro is within 5 g or 10% of its target, whichever is larger; a day when it is within 10 g or 5%. Outside that, say the difference plainly ("Carbs 26 g above the target") with no check and no warning. The tolerance is a proposal waiting on dietitian sign-off.
+
 ## Tokens
 
 [`docs/design/tokens.css`](docs/design/tokens.css) is the source of truth: light values on `:root`, dark on `[data-mode="dark"]`. The roles:
@@ -51,14 +67,15 @@ Both faces may be bundled in the app binary. Ship `OFL.txt` with them and don't 
 - Primary: violet fill, `--color-accent-ink` text, capsule, 44 pt (50 pt full width). One per screen.
 - Secondary: 1.5 pt ink stroke, capsule, same heights. Text actions are violet text with no arrow; chevrons only mark rows that navigate.
 - Every hit target is 44 pt or more. Chips and the unit menu are 36 pt tall, and text actions inside rows (Review, Try again) are 24 pt tall; their hit areas extend to 44.
-- Logged meals show a check, "logged" and a lock. Calories stay hidden until the one global "Show calories" switch in Profile is on; Today has no calorie row.
+- Logged meals show a check, "logged" and a lock. The lock means a plan update won't change the meal; you can still edit it. VoiceOver reads "logged, kept when the plan updates". Calories stay hidden until the one global "Show calories" switch in Profile is on; Today has no calorie row.
 - Segmented controls use the system look: a `Paper3` track, the selected segment on `SegSelected` with ink text and a soft shadow, never a violet fill. A change applies at once (no Save).
 - Progress tracks are `Paper3` with a 1 pt `Rule2` stroke (2.97:1 on light paper, 2.51:1 on dark).
 - Outfit Light (300) only at Title 3 (20 pt) and up. Figures at Callout or Body size use Outfit Medium.
 - Rule lines end with their source after a single middle dot ("· ACSM 2016"). Text actions never carry an arrow; a trailing chevron icon marks navigation, including a link that leaves the app ("Find one").
 - A badge (violet, count) sits on the Profile tab while a connection needs attention; the Profile hub repeats it as "1 needs attention".
 - Toolbar actions: Ride plan "Edit" opens a menu (Edit time and duration, Mark as key session, Delete for a manual workout or Hide for a synced one). Goal weight "Edit" changes the goal. Log's title is a menu of today's meals plus "Snack now".
-- After Save, a toast says what was logged and offers Undo; offline it says "Saved on this phone, syncs later".
+- Logging has four states. Draft: editable foods, an "Eaten at" time apart from the meal's slot, and Log meal. Saving: "Saving…", repeat taps ignored. Saved: read-only foods, the eaten and logged times, Edit meal and Delete meal. Editing: "Edit pre-ride snack", Cancel, and Save changes, which updates the same meal ("Meal updated"). A failed save keeps the entries: "Couldn't save this meal. Your entries are still here." with Try again.
+- After logging, an inline confirmation at the top of the saved meal says what was logged and offers Undo and Dismiss. It has no timer. Offline it says "Saved on this phone, syncs later"; that is a saved meal, not an error.
 
 ## Increase Contrast
 
@@ -69,12 +86,17 @@ With Increase Contrast on (`colorSchemeContrast == .increased`):
 
 ## AX sizes
 
-At accessibility sizes (`dynamicTypeSize.isAccessibilitySize`) the layout reflows. The mockups draw Today at AX3 (Body 40, Title 1 48, Footnote 33):
-- the meter pair and the stat trio go single column;
+At accessibility sizes (`dynamicTypeSize.isAccessibilitySize`) the layout reflows. The mockups draw Today at AX3 (Body 40, Title 1 48, Footnote 33); the app supports every size up to AX5:
+- every screen scrolls, and no text is capped, truncated or shrunk to fit;
+- buttons and source citations wrap;
+- the stat trio goes single column;
+- timeline rows put the time above the row;
+- the pace picker becomes four checkmarked rows with the full "of body weight a week" label;
+- sheets open at the large detent, and their form scrolls between the header row and Save;
 - Week and Goal rows stack: day and tag on one line, then workout and grams;
 - the Today header uses `ViewThatFits` (date and code tag in one row, else stacked);
 - the readings grid becomes a list;
-- the caffeine chart's x-axis strides every 12 h;
+- the caffeine chart's x-axis strides every 12 h, and its labels move to an event list under the chart;
 - the tab bar keeps its size and relies on the large content viewer.
 
 ## Motion
@@ -96,7 +118,8 @@ Every data region has loading, empty and error states. The mockups draw one of e
 | Meal ideas | Skeleton cards | *drawn*: no idea passes the filters, offer to drop the soft one | Couldn't load ideas: Retry |
 | Connections | "Checking…" per row | None connected: link to Connect your data | Per source, as drawn for WHOOP (Sign-in expired, Reconnect) |
 | Connect your data | Connect button busy | n/a | Connection refused: say which, Try again |
-| Log: save | Save button busy | n/a | Offline: "Saved on this phone, syncs later" (drawn as the toast inset) |
+| Log: save | *drawn*: "Saving…", repeat taps ignored | n/a | *drawn*: "Couldn't save this meal. Your entries are still here." Try again. Offline is not an error: "Saved on this phone, syncs later" (*drawn*) |
+| Why today's targets | Skeleton sections | n/a (always opened from a plan) | Plan couldn't update: keep the last plan, say when it was made |
 | Goal weight | Skeleton stats and week rows | *drawn*: "Set a goal weight" | Fewer than 3 weigh-ins this week: keep last week's targets, say why. *Drawn*: goal paused after 2 weeks of low intake against training |
 | Profile | n/a | n/a | A connection needs attention: badge on the tab and the row |
 | Caffeine | Skeleton chart | Nothing logged: flat line, "No caffeine today" | Couldn't model: show doses as a list |
@@ -144,9 +167,10 @@ Figures that compare take `.monospacedDigit()`. Whether Outfit and Onest ship ta
 | Component | SwiftUI |
 | --- | --- |
 | Carb code tag | `CarbCodeTag(code:)`: `HStack { LevelBars(level:); Text(code.word) }` on `Capsule().fill(Color("CodeGreen"))` |
-| Level glyph | `LevelBars`: three `RoundedRectangle`s, the unfilled ones at 30% opacity |
-| Targets (carbs, protein, fat) | `ProgressView(value:total:)` with a capsule `ProgressViewStyle` tinted `Accent` |
-| Fuel timeline | `LazyVStack` of `TimelineRow`; the ride row is a `NavigationLink` on an `AccentSoft` background |
+| Level glyph | `LevelBars`: three `RoundedRectangle`s, filled for the level and stroked with a 1 pt outline for the rest (never faded), as in Carb codes. Hidden from VoiceOver; the tag reads "GREEN, high carb day" |
+| Targets (carbs, protein) | `ProgressView(value:total:)` with a capsule `ProgressViewStyle` tinted `Accent`. No fat meter until the engine has a fat target. One VoiceOver element per nutrient: "Carbs, 262 of 560 grams, 298 to go". The fill stops at full; the numbers still say how far over |
+| Next up | `VStack` of title, time, targets and two `Button`s (Log it, Ideas) that VoiceOver reaches one by one; at AX sizes the buttons stack; the countdown isn't announced as it changes |
+| Fuel timeline | `LazyVStack` of `TimelineRow`; the ride row is a `NavigationLink` on an `AccentSoft` background. VoiceOver reads time, meal, targets or what was eaten, and "logged" |
 | Ride lanes | `Grid` with one `GridRow` per lane (time rail, target, rule line with SF Symbol `ruler`) |
 | Grouped rows | `List` `.insetGrouped` with `listRowBackground(Color("Paper2"))`, or a `VStack` with `Divider()` |
 | Switch | `Toggle(isOn:)` `.tint(Color("Accent"))` |
@@ -159,7 +183,7 @@ Figures that compare take `.monospacedDigit()`. Whether Outfit and Onest ship ta
 | Recipe card | `NavigationLink` with an `AsyncImage` in the 72 pt slot |
 | Loading, empty, error | `.redacted(reason: .placeholder)` skeletons, `ContentUnavailableView`, an inline notice with Retry |
 | Stat trio (Now, Goal, to go) | `Grid` of three `LabeledContent` columns parted by `Divider()` |
-| Pace picker | `Picker(selection:)` with `.pickerStyle(.segmented)` in the system look (not tinted), one line per segment; the footnote says "0.5% (recommended)"; a change applies at once |
+| Pace picker | `Picker(selection:)` with `.pickerStyle(.segmented)` in the system look (not tinted), one line per segment; the footnote says "0.5% (recommended)"; a change applies at once. At accessibility sizes, four checkmarked rows with the full label instead |
 | Daily plan rows | The Week row: `CarbCodeTag` plus words ("Lighter", "Hard day: fuel in full"); with Show calories on, "500 kcal under maintenance" |
 | Caffeine curve | Swift Charts: `AreaMark` + `LineMark` (`Accent`) from the Bateman model sampled every 5 min; `RectangleMark` for the ride window (`AccentSoft`); `RuleMark` for last caffeine (dashed) and bedtime; `PointMark` for doses; `.accessibilityChartDescriptor` for VoiceOver |
 | Curve readings | `Grid` of time and mg pairs under the chart, the same values VoiceOver reads |
@@ -167,12 +191,13 @@ Figures that compare take `.monospacedDigit()`. Whether Outfit and Onest ship ta
 | Warning tag | `Label("Gel after last caffeine", systemImage: "exclamationmark.triangle")` on a `Paper3` capsule, ink text, never a code colour |
 | Tab roots | Each tab is a `NavigationStack` with a large `.navigationTitle`; pushed screens use the inline title |
 | Profile hub | `List(.insetGrouped)` of `NavigationLink`s, the global `Toggle("Show calories")`, a footer `Text`; `.badge(1)` on the Profile `Tab` |
-| Code header link | `NavigationLink` wrapping `CarbCodeTag` and the day label, with a chevron, opening Why GREEN today |
+| Code header link | `NavigationLink` wrapping `CarbCodeTag` and the day label, with a chevron, opening Why today's targets |
+| Why today's targets | A pushed `ScrollView` of sections: summary (targets, the reason, the plan's time), the day's sessions as `NavigationLink`s, the rule lines with sources, the meal split as `TimelineRow`s, looking ahead, and inputs. Opened from the code header link, a Week day and the session's Why row; back returns to where it came from |
 | Toolbar menus | `ToolbarItem(placement: .topBarTrailing) { Menu("Edit") { … } }`; Log's title is a `Menu` in `.toolbarTitleMenu` |
-| Quick-add workout | `.sheet` with `.presentationDetents([.medium, .large])`: segmented `Picker`s for sport and effort, `DatePicker` for start, a duration `Picker`, Save |
-| Toast | A bottom overlay `HStack` with Undo, dismissed after a few seconds, announced with `AccessibilityNotification.Announcement` |
-| Goal sheet | `.sheet` with a decimal `TextField` (kg), the pace `Picker`, inline validation text and the eligibility notice |
-| Caffeine readings | One combined accessibility element (`.accessibilityElement(children: .combine)`), and the chart carries `.accessibilityChartDescriptor` |
+| Quick-add workout | `.sheet` with `.presentationDetents([.medium, .large])`: segmented `Picker`s for sport and effort, `DatePicker` for start, a duration `Picker`, Save. Large at accessibility sizes; the form scrolls and Cancel and Save stay visible |
+| Log confirmation | An inline `HStack` at the top of the saved meal with Undo and Dismiss, not a timed overlay. It stays until dismissed and is announced once with `AccessibilityNotification.Announcement` |
+| Goal sheet | `.sheet` with a decimal `TextField` (kg), the pace `Picker`, inline validation text and the eligibility notice; the form scrolls |
+| Caffeine readings | Each time-and-mg reading is its own element ("22:30, 63 mg"), not one long utterance; the chart carries `.accessibilityChartDescriptor` built from the same samples |
 | Quick-add caffeine | A row of `Button`s in a capsule style (Coffee, Espresso, Tea, Gel) |
 | Icons | SF Symbols: `chevron.left/right/down`, `lock.fill`, `checkmark`, `exclamationmark.triangle`, `arrow.triangle.2.circlepath`, `magnifyingglass`, `barcode.viewfinder`, `plus`, `heart`, `ruler`, `scope`, `calendar`, `plus.square`, `person` |
 
