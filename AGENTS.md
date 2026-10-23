@@ -33,6 +33,16 @@ Rules:
 - Stage by explicit path. No `git add -A`, `git add .` or `git commit -a`. Check `git diff --cached --name-only` before committing.
 - Never commit agent scratch: `.claude/`, `tmp/`, plans, scratch scripts.
 
+## Milestones and releases
+
+- `main` is the only long-lived branch. Each issue gets a short-lived `feature/<n>-<slug>` branch off `main`, created when work on the issue starts and merged by PR.
+- GitHub milestones track the plan: P0 (access and reviews) → B0 (scope, scaffold, contracts) → B1 (local loop) → B2 (connected loop) → B3 (external TestFlight beta) → A1 (after the beta) → L (later).
+- When a milestone is done, close it and tag `main` with its name (for example `b0`).
+- Cut `release/beta` from `main` when the B3 build goes to external TestFlight, and `release/1.0` at the App Store code freeze.
+- Fixes land on `main` first, then are cherry-picked to the release branch.
+- Once external builds exist, unfinished features stay behind a build flag.
+- The ruleset and CI push trigger for `release/*` are set up in #24.
+
 ## Verification loop
 
 Run these steps for every feature issue, in order. A step is done only when its done-condition holds. Paperwork issues (label `paperwork`) have no branch and skip the loop: they're done when every box is ticked and the evidence (a reply, a link, a decision) is recorded in the issue.
