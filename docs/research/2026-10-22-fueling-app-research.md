@@ -30,7 +30,7 @@ This is product research, not legal advice. Integration terms change often; re-c
 
 | Need | Source | Direct API for a solo developer | Through Apple Health | Through an aggregator | MVP verdict |
 |---|---|---|---|---|---|
-| Planned workouts | **Intervals.icu** | Yes. Personal API key, or OAuth once your app is approved (stays "Pending" until then). `GET /api/v1/athlete/{id}/events`, `CALENDAR_UPDATED` webhook. OAuth default 100 requests per user per day. Strava-sourced data is excluded from the API. Events carry `carbs_per_hour`, a fueling target the athlete or coach sets. Completed activities carry an estimated `carbs_used` (cycling only) and athlete-entered `carbs_ingested`. The spec also lists `carbs_used` on events, but there's no sign it's filled in for planned workouts yet. | n/a | Terra reads its plans | **Use first** |
+| Planned workouts | **Intervals.icu** | Yes. Personal API key, or OAuth once your app is approved (stays "Pending" until then). `GET /api/v1/athlete/{id}/events`, `CALENDAR_UPDATED` webhook. OAuth default 100 requests per user per day. Strava-sourced data is excluded from the API. Events carry `carbs_per_hour`, a fueling target the athlete or coach sets. Completed activities carry an estimated `carbs_used` (cycling only) and athlete-entered `carbs_ingested`. The spec also lists `carbs_used` on events, but there's no sign it's filled in for planned workouts yet. API Terms (effective 23 Oct 2025): commercial use allowed (§1); if the app displays information derived from Garmin-sourced data, it must show Garmin attribution as Garmin's brand guidelines require (§1.1). | n/a | Terra reads its plans | **Use first** |
 | Planned workouts | **TrainingPeaks** | Approved partners only, "not available for personal use." Planned workouts "up to 7 days in the future." Apply at api.trainingpeaks.com/request-access; reply in 7–10 days. | n/a | Terra reads its plans | **Apply now.** Meanwhile the premium-only ICS feed gives about 14 days ahead, updated up to 24 h late, with no interval steps. |
 | Planned workouts | **Garmin Connect** | No documented calendar read. The Training API "allows you to publish workouts and training plans to the Garmin Connect calendar" (push only). Program reopened 2026-10-21 (see the Garmin row below). | n/a | Terra lists Garmin provider-created plans (docs seen as excerpts only) | Not an MVP source. Ask Garmin whether approved partners can read scheduled workouts. ICS calendar feed has names and dates only. |
 | Planned workouts | Apple WorkoutKit | Only returns workouts your own app scheduled | n/a | n/a | No |
@@ -72,10 +72,14 @@ The aggregator agent's advice holds up: don't build the gated cloud integrations
   - Write your entries back to Health.
 - **Rules engine** (deterministic, see §4) that turns the next 24–72 h of planned sessions into day and meal carb codes, gram targets and timing. Recalibrate energy needs from weight trend versus logged intake.
 - **Meal suggestions** from a recipe library tagged by carb and protein content, picked by the rules engine. If you want natural-language phrasing, use Apple's on-device Foundation Models: iOS 26+ on Apple Intelligence devices, 4,096-token on-device context.
-- **Phasing:**
-  - MVP: Health, Intervals.icu, own logger, rules engine.
-  - Next: WHOOP; TrainingPeaks once approved (ICS until then).
-  - Later: Garmin Starter (reopened 2026-10-21, free) for richer completed-workout data; Terra only if the gaps justify roughly $600/mo.
+- **Milestones (decided 2026-10-23; they replace the earlier MVP/Next/Later phasing):**
+  - P0, in parallel: provider access and the dietitian and legal reviews.
+  - B0: beta scope, app and engine scaffold, data and rule contracts.
+  - B1: the core loop on one device: manual workouts, own logger, rules engine, meal-ideas library, replanning that changes only future meals.
+  - B2: the same loop connected: Intervals.icu, Apple Health, Supabase sync.
+  - B3: the external TestFlight beta, free. It covers the core loop (plan a workout, suggest real food, log it, revise only future meals) plus the meal-ideas library.
+  - A1 and L, after the beta: subscriptions, caffeine tracking, goal weight, WHOOP, TrainingPeaks once approved (ICS until then), Garmin Starter (reopened 2026-10-21, free) for richer completed-workout data, and Terra only if the gaps justify roughly $600/mo.
+  - Issue-by-issue placement is in the Astra backlog review (`docs/reviews/2026-10-23-astra-2a-backlog.md`).
 
 ## 4. Recommendation engine rules (evidence)
 
@@ -88,13 +92,13 @@ Main source: Thomas, Erdman & Burke, ACSM/AND/DC joint position 2016, *MSSE* 48:
 | Daily carbs, 1–3 h/day moderate-high | 6–10 g/kg | ACSM/AND/DC 2016 |
 | Daily carbs, more than 4–5 h/day | 8–12 g/kg | ACSM/AND/DC 2016 |
 | Day and meal carb coding | Red/amber/green = low/moderate/high carb, set by the demands of upcoming sessions. Impey "deliberately" gave no gram amounts, so map codes to the g/kg bands above. | Impey et al. 2018, *Sports Med* 48:1031, doi 10.1007/s40279-018-0867-7 |
-| Pre-session | 1–4 g/kg carbs, 1–4 h before; under 1 h out, a small easy-to-digest option | ACSM/AND/DC 2016 |
-| During, under 45 min | Nothing needed | ACSM/AND/DC 2016 |
-| During, 45–75 min | Small amounts, including a carbohydrate mouth rinse | ACSM/AND/DC 2016 (from memory and secondary summaries; the table is paywalled, see §8) |
-| During, 1–2.5 h | 30–60 g/h | ACSM/AND/DC 2016 |
-| During, over 2.5 h | Up to 90 g/h, multiple carb types (glucose plus fructose) | ACSM/AND/DC 2016 |
+| Pre-session, sessions over 60 min | "1–4 g/kg consumed 1–4 h before exercise." The grams aren't tied to the hours. Under 1 h out, a small easy-to-digest option (app default, not in the table) | ACSM/AND/DC 2016, Table 2 |
+| During, under 45 min | Nothing needed | ACSM/AND/DC 2016, Table 2 |
+| During, 45–75 min (sustained high intensity) | "Small amounts including mouth rinse" | ACSM/AND/DC 2016, Table 2 |
+| During, 1–2.5 h | 30–60 g/h | ACSM/AND/DC 2016, Table 2 |
+| During, over 2.5–3 h | Up to 90 g/h, multiple carb types (glucose plus fructose). 90 is a ceiling; the table sets no 60 g/h minimum | ACSM/AND/DC 2016, Table 2 |
 | During, opt-in only | 120 g/h was tolerated in trained cyclists over 2–3 h; small single-lab studies, no performance outcome verified. A 2026 review says "the upper limit of CHO intake could increase from 90 to 120 g/h (at least for trained participants)," calls 120–200 g/h "not yet substantiated," and cites diminishing performance gains above about 78 g/h in recreational cyclists. | Podlogar et al. 2022 (PMC9560939); Morton et al. 2026, *J Nutr* 156:101442 (PMC13197957) |
-| Post, next session under 8 h away | 1.0–1.2 g/kg/h carbs for 4 h; no benefit above 1.2 | Burke et al. 2011; *Sports Med* 2025 review |
+| Post, under 8 h between two fuel-demanding sessions | 1.0–1.2 g/kg/h carbs for the first 4 h, then back to daily needs. Only for "<8 h recovery between 2 fuel demanding sessions," not before any next session. Burke 2011 and a 2025 review say there's no benefit above 1.2 (not re-checked) | ACSM/AND/DC 2016, Table 2; Burke et al. 2011; *Sports Med* 2025 review |
 | Post, protein | 0.25–0.3 g/kg (about 15–25 g) within 0–2 h | ACSM/AND/DC 2016 |
 | Daily protein | 1.2–2.0 g/kg, about 0.4 g/kg per meal over at least 4 meals. Women: 1.4–2.2 g/kg, higher end in the luteal phase and around menopause | ACSM/AND/DC 2016; Schoenfeld & Aragon 2018; ISSN 2023 (doi 10.1080/15502783.2023.2204066) |
 | Fat | 20–35% of energy | ACSM/AND/DC 2016 |
@@ -102,7 +106,7 @@ Main source: Thomas, Erdman & Burke, ACSM/AND/DC joint position 2016, *MSSE* 48:
 
 **Energy estimates for a planned session**
 - **Cycling:** kcal ≈ kJ ÷ (4.184 × gross efficiency). At 20–25% efficiency, 1 kJ of work is about 0.96–1.2 kcal, so kJ ≈ kcal works. Lab studies put gross efficiency nearer 18–21% (de Koning et al. 2012, PMID 22706941; not re-checked), so the carb-cost rule below uses 20%: 1 kJ ≈ 1.2 kcal.
-- **Running, level:** 3.40 J/kg/m (Minetti et al. 2002, doi 10.1152/japplphysiol.01177.2001), about 0.81 kcal/kg/km, roughly the same at any speed. The common "1 kcal/kg/km" rule overestimates by about 19%. Grade changes it a lot: about 18.9 J/kg/m at +45%.
+- **Running, level:** 3.40 J/kg/m (Minetti et al. 2002, doi 10.1152/japplphysiol.01177.2001), about 0.81 kcal/kg/km, roughly the same at any speed. The common "1 kcal/kg/km" rule overestimates it by about 23% (0.81 is 19% below 1). Grade changes it a lot: about 18.9 J/kg/m at +45%.
 - **Swimming:** about 4 kcal/kg/km for a 70 kg swimmer, from a single 1974 study. Low confidence.
 
 **Resting energy**
@@ -114,48 +118,66 @@ Main source: Thomas, Erdman & Burke, ACSM/AND/DC joint position 2016, *MSSE* 48:
 
 The guidelines above give ranges. Hexis and Fuelin don't publish how they choose inside them. Fuelin's FAQ lists RMR, FTP and threshold pace as inputs and nothing more; Hexis says only that carb codes adapt "across a 72-hour training window." So the engine needs its own rules. These defaults stay inside the ACSM ranges and use what Intervals.icu gives us (planned kJ, duration and intensity factor, IF).
 
-1. **Session carb cost: how many grams the session burns.**
+**v1 decision (2026-10-23): guideline bands only.** Every day's target is the midpoint of its ACSM band, picked by the day's training hours. Rest and light days use 3 g/kg. The proposed boundaries are rules D1–D4 in `docs/reviews/2026-10-23-astra-2b-engine.md` §2: no training 3 g/kg; up to 1 h, 5–7 g/kg; over 1 h up to 4 h, 6–10 g/kg; over 4 h, 8–12 g/kg. The exact cut-offs are app policy for the dietitian to approve. The before, during and after rules (items 3–5) still apply; the IF scale for the during rate is a window rule, not the estimator. The kJ-based session carb cost in item 1 stays documented as a deferred, low-confidence option. It isn't used until it's validated and a sports dietitian approves it.
+
+1. **Session carb cost: how many grams the session burns (deferred estimator, not used in v1).**
    - Cycling: grams ≈ planned kJ × 1.2 kcal/kJ × carb share ÷ 4.1 kcal/g.
    - Carb share by intensity, from van Loon et al. 2001 (*J Physiol* 536:295, PMC2278845; 8 trained male cyclists after an overnight fast; plasma glucose plus muscle glycogen):
 
      | Intensity | Carb share of energy | Carbs burned |
      |---|---|---|
-     | 40% Wmax | 45% | 1.44 g/min |
+     | 40% Wmax | 46% | 1.44 g/min |
      | 55% Wmax | 51% | 2.04 g/min |
-     | 75% Wmax | 76% | 3.90 g/min |
+     | 75% Wmax | 76% | 3.91 g/min |
 
-   - To use FTP-based IF, assume FTP ≈ 75% of Wmax (a ramp-test rule of thumb, unverified): IF 0.55 → 45%, IF 0.73 → 51%, IF 1.0 → 76%. Interpolate linearly; hold at 76% above IF 1.0 (no data). This works out to about 0.13 g per kJ for easy riding, 0.15 at endurance and 0.22 at threshold.
-   - Running: 0.81 kcal/kg/km × distance, with the same carb-share table by pace or heart-rate zone. No running-specific data found; low confidence.
-   - No power or pace (manual quick-add, swimming, strength): skip the estimate and use the middle of the ACSM band for the day.
+     The 46% is from the paper's results text; its Table 2 components, rounded, add up to 45%.
+   - To use FTP-based IF, assume FTP ≈ 75% of Wmax (a ramp-test rule of thumb, unverified). On that assumption 40%, 55% and 75% Wmax are IF ≈ 0.53, 0.73 and 1.0. The estimator's anchors are rounded, chosen coefficients rather than exact source values: IF 0.55 → 45%, IF 0.73 → 51%, IF 1.0 → 76%. Interpolate linearly; hold at 76% above IF 1.0 (no data). This works out to about 0.13 g per kJ for easy riding, 0.15 at endurance and 0.22 at threshold.
+   - Running and swimming: the cycling carb shares aren't validated for them, so they use the guideline bands only. (Level running costs about 0.81 kcal/kg/km, but there's no approved way to split that into carbs.)
+   - No power (manual quick-add, strength): skip the estimate and use the middle of the ACSM band for the day.
    - Caveats: fasted men with full glycogen stores. Women look similar (Romijn et al. 2000, abstract only). After a low-carb day the table overstates carb use.
    - Benchmarks for later, not inputs: Rothschild et al. 2024 (*Sports Med*, doi 10.1007/s40279-024-02131-z) built training-load models of session carb use with a 10–14% mean error in cyclists. Intervals.icu reports carbs used for completed rides from two models (kJ-based and TSS-based, lower value wins), per a forum post. We haven't read usable equations for either.
-2. **Day target** = rest-day base + today's session carb costs, clamped to the ACSM band for the day.
+2. **Day target.** v1: the midpoint of the ACSM band for the day (3 g/kg on rest and light days). Deferred estimator: rest-day base + today's session carb costs, clamped to the ACSM band for the day.
    - Base: 3 g/kg, the bottom of the light-day band. Hexis's webinar gives 3–5 g/kg for rest days. The dietitian tunes this.
    - 72-hour look-ahead: when tomorrow's session lasts more than 2.5 h or starts before 10:00, move up to 1 g/kg of tomorrow's pre-session carbs into this evening.
    - Carbs eaten during a session count toward the day's total, shown on their own line. Hexis's Tour de France webinar says riders get "55 - 60% of their total daily carbohydrate intake on the bike." None of the guidelines say either way.
 3. **During** (sessions over 60 min):
    - 1–2.5 h: 30 g/h at IF 0.65 or below, rising linearly to 60 g/h at IF 0.85 or above. Precision Fuel & Hydration describes the same idea: "scaling toward 60g as duration and intensity increase."
-   - Over 2.5 h: 60–90 g/h on the same intensity scale.
+   - Over 2.5 h: 60–90 g/h on the same intensity scale. The 60 g/h floor is an app choice; ACSM's "up to 90 g/h" is a ceiling, not a minimum.
    - Above 90 g/h, up to 120 g/h, only if the athlete opts in and has practised it (Morton et al. 2026).
    - Never above the athlete's own gut-trained maximum.
    - If a coach set `carbs_per_hour` on the Intervals.icu event, use it, within the same safety cap.
-4. **Before** (sessions over 60 min): 1 g/kg by default. Use 2 g/kg for sessions over 2.5 h or races when the meal is at least 2 h before the start. Never more than 1 g/kg per hour of lead time, or 4 g/kg in total. This stays inside the ACSM 1–4 g/kg range and keeps the pre-session meal a realistic size.
-5. **After:** if the next session is less than 8 h away, 1.0 g/kg per hour for 4 h (1.2 if the next session is key). Otherwise the recovery meal is its share of the day target. Protein at least 0.3 g/kg.
+4. **Before** (sessions over 60 min): 1 g/kg by default. Use 2 g/kg for sessions over 2.5 h or races when the meal is at least 2 h before the start. Never more than 1 g/kg per hour of lead time, or 4 g/kg in total. This stays inside the ACSM 1–4 g/kg range and keeps the pre-session meal a realistic size. The per-hour cap is an app choice: ACSM doesn't tie grams to hours.
+5. **After:** if there are less than 8 h of recovery before the next fuel-demanding session (ACSM 2016, Table 2), 1.0 g/kg per hour for the first 4 h (1.2 if the next session is key). Otherwise the recovery meal is its share of the day target. Protein at least 0.3 g/kg.
 6. **Everything else:** day target − before − during − after, spread across the remaining meals.
 
-**Tuesday from the wireframes, worked through these rules** (70 kg; Threshold 3×12; 1 h 45; 1,250 kJ; IF assumed 0.82):
+**Tuesday from the wireframes, v1 (guideline bands only)** (70 kg; Threshold 3×12, 17:30–19:15, 1 h 45; 1,250 kJ; IF 0.82; pre-ride snack 15:30; breakfast, lunch and dinner; next session at least 8 h away; not a key session). The wireframes use these numbers.
 
-| Step | Rule output | Wireframe |
+| Step | Rule | Output |
 |---|---|---|
-| Session carb cost | 1,250 × 1.2 × 59% ÷ 4.1 ≈ 216 g | not shown |
-| Day target | 210 + 216 = 426 g (6.1 g/kg, inside 6–10) | 490 g |
-| Before | 70 g (1 g/kg) | 80 g |
-| During | 55 g/h × 1.75 h ≈ 95 g | 50 g/h, about 90 g |
-| Breakfast, lunch, dinner | 426 − 70 − 95 = 261 g | 320 g |
+| Day band | 1–4 h of training: 6–10 g/kg = 420–700 g | GREEN |
+| Day target | Band midpoint, 8 g/kg | 560 g |
+| Before | 1 g/kg, about 2 h before | 70 g |
+| During | u = (0.82 − 0.65) ÷ 0.20 = 0.85; 30 + 30u = 55.5 g/h × 1.75 h = 97.125 g | about 97 g |
+| After | Next session at least 8 h away, so no rapid refuelling; dinner gets its ordinary share | see next row |
+| Breakfast, lunch, dinner | 560 − 70 − 97.125 = 392.875 g, 130.958 g each | 131 g each (70 + 97 + 393 = 560) |
+| Protein | 1.6 g/kg (proposed default inside 1.2–2.0), 28 g in each of four meals. The recovery dinner's 0.3 g/kg (21 g) is part of its 28 g, not extra | 112 g a day |
 
-All the wireframe numbers sit inside the ACSM ranges. The rules give a day about 13% lower, mostly because of the 3 g/kg base.
+The engine keeps the unrounded values and rounds only for display.
 
-**Goal weight (proposed; a sports dietitian must sign off)**
+**The same Tuesday with the deferred estimator** (for reference only; not used in v1):
+
+| Step | Rule output |
+|---|---|
+| Carb share at IF 0.82 | 0.51 + (0.82 − 0.73) ÷ 0.27 × 0.25 = 59.333% |
+| Session carb cost | 1,250 × 1.2 × 0.59333 ÷ 4.1 = 217.07 g |
+| Day target | 210 + 217.07 = 427.07 g (6.1 g/kg, inside 6–10) |
+| Before | 70 g |
+| During | 97.125 g |
+| Breakfast, lunch, dinner | 427.07 − 70 − 97.125 = 259.95 g |
+
+An earlier version of this example showed 426 g and about 95 g because it rounded the share to 59% and the during rate to 55 g/h before multiplying. The band-only day is about 133 g higher than the estimate because the midpoint ignores the session's planned work.
+
+**Goal weight (proposed; after the beta; a sports dietitian must sign off)**
 
 The athlete enters current and goal weight and picks a weekly pace. The daily energy target moves to reach the goal, MyFitnessPal-style, but inside the training rules above.
 
@@ -173,7 +195,7 @@ The athlete enters current and goal weight and picks a weekly pace. The daily en
    - **Energy availability:** no planned day below 30 kcal per kg of fat-free mass after training (IOC 2023 treats about 30 as a guide). When this floor caps the deficit, the app slows the pace and moves the projected date instead of under-fueling.
    - **Calories:** never below 1,200 (women) or 1,500 (men), MyFitnessPal's defaults.
    - **Goal weight:** no goal below BMI 18.5. This is a design default; we found no published rule for apps.
-6. **Protein while losing:** about 2.0 g/kg body weight. That's about 2.3 g/kg of fat-free mass, the low end of the 2.3–3.1 g/kg FFM in Helms et al. 2014 (PMC4033492), which the ISSN 2017 protein stand cites (secondary source, not re-checked).
+6. **Protein while losing:** about 2.0 g/kg body weight. That equals 2.3 g/kg of fat-free mass only near 13% body fat (at 30% body fat it's 2.86 g/kg FFM), so it isn't a general FFM figure. 2.3 is the low end of the 2.3–3.1 g/kg FFM in Helms et al. 2014 (PMC4033492), which the ISSN 2017 protein stand cites (secondary source, not re-checked).
 7. **Eligibility and safety:**
    - No weight-loss pace for under-18s, during pregnancy, or for anyone the eating-disorder screen flags.
    - A sustained low-energy-availability flag pauses the deficit.
@@ -189,7 +211,7 @@ Worked example (Alex, 70 kg, goal 67 kg, 0.5% a week; this week's plan from the 
 | Projected goal date | about 6 Feb 2027 (21 Dec 2026 at the full pace) |
 | Protein | 140 g a day |
 
-**Caffeine (proposed; a sports dietitian must sign off)**
+**Caffeine (proposed; after the beta; a sports dietitian must sign off)**
 
 1. **Logging:** caffeine comes from logged foods and from Apple Health's `dietaryCaffeine` type.
    - Food sources: USDA FoodData Central (nutrient 1057), Open Food Facts where present, and gel labels.
@@ -270,7 +292,7 @@ Supersapiens shut down in early 2024. WHOOP and TrainingPeaks have no meal plann
 - **Washington My Health My Data Act:** consent before collecting consumer health data, and separate consent before sharing. Applies regardless of company size.
 - **HIPAA:** generally doesn't apply to a consumer app. It does if dietitians who bill insurance electronically put client records into the app; then you need a business associate agreement.
 - **GDPR:** for an EU launch, health data needs explicit consent (Art. 9(2)(a)).
-- **Branding:** "Powered by Strava" or "Compatible with Strava" (if Strava is ever used); Garmin attribution on Garmin-derived data, including AI output; "Works with Apple Health" badge rules.
+- **Branding:** "Powered by Strava" or "Compatible with Strava" (if Strava is ever used); Garmin attribution on Garmin-derived data, including AI output, and on anything the app shows that is derived from Garmin-sourced data arriving through Intervals.icu (Intervals.icu API Terms §1.1); "Works with Apple Health" badge rules.
 - **Backend HIPAA options if ever needed:** Supabase requires Team or Enterprise plus a HIPAA add-on. Google's business associate agreement covers only named Firebase/GCP products. Cloudflare and Neon are unverified.
 
 ## 7. Decisions and next steps
@@ -296,9 +318,10 @@ Supersapiens shut down in early 2024. WHOOP and TrainingPeaks have no meal plann
 - **Hexis pricing:** its two sites list different prices.
 - **Fuelin Copilot price:** comes from the App Store listing only.
 - **Terra:** its planned-workout read support was seen in docs excerpts only. It doesn't explain how it reads MyFitnessPal "without provider credentials."
-- **TrainingPeaks:** field list, fees, rate limits, and AI/storage terms not found. Same for Intervals.icu's API terms text.
-- **ACSM/AND/DC 2016 carbohydrate table:** the MSSE and JAND full texts are paywalled, so the §4 rows weren't read directly. The 45–75 min row and whether "1–4 g/kg, 1–4 h before" links grams to hours are unconfirmed. Morton et al. 2026 does confirm the "≤90 g/h … >2.5–3 h" row.
-- **Carb-cost estimates disagree:** an Intervals.icu user reported 266 g used on a 3 h Zone 2 ride against 136 g from EatMyRide, and said Intervals.icu "seems to greatly overstate" carbs used (forum, Aug 2025). The Intervals.icu method description comes from a forum member, not the developer.
+- **TrainingPeaks:** field list, fees, rate limits, and AI/storage terms not found. (Intervals.icu's API Terms were found and read on 2026-10-23; see §2.)
+- **ACSM/AND/DC 2016 carbohydrate table:** now read in full from a hosted copy of the paper (2026-10-23), which confirmed the Table 2 rows in §4. Still not verified: the "no benefit above 1.2 g/kg/h" recovery claim from Burke 2011 and the 2025 review.
+- **Day-band boundaries:** ACSM's training categories are approximate ("1–3 h/day", "more than 4–5 h/day"), so the v1 cut-offs at 1 h and 4 h are app policy for the dietitian to approve.
+- **Carb-cost estimates disagree:** an Intervals.icu user reported 266 g used on a 3 h Zone 2 ride against 136 g from EatMyRide, and said Intervals.icu "seems to greatly overstate" carbs used (forum, Aug 2025). The Intervals.icu method description comes from a forum member, not the developer. Our own deferred estimator (§4 item 1) isn't validated either: the FTP ≈ 75% Wmax mapping is a rule of thumb, and van Loon measured eight fasted trained men cycling.
 - **Hexis rest-day carbs:** Roadman's review reverse-engineers about 28% of rest-day calories from carbs (about 1.5 g/kg for its 82 kg example). Hexis's own webinar says 3–5 g/kg. Treat Roadman's number as unverified.
 - **TrainingPeaks Fueling Insights** predicts carb and fat use for planned structured workouts (built with Iñigo San Millán). Whether the Partner API exposes it is unknown.
 - **Goal weight, not verified:**
@@ -362,7 +385,7 @@ Researched 2026-10-22 (vendor pricing, SDK and compliance pages). The guiding ru
 | Health data | HealthKit, with observer queries and background delivery |
 | Fueling rules (§4) | A plain Swift package (`FuelingEngine`): pure functions, unit-tested, runs on the device |
 | Login | Sign in with Apple (AuthenticationServices). Email-only or Apple-only login avoids Guideline 4.8's equivalent-login requirement. |
-| Subscriptions | StoreKit 2 with `SubscriptionStoreView`. Entitlements come from `Transaction.currentEntitlements`, with no server needed at launch. |
+| Subscriptions (after the beta; the beta is free) | StoreKit 2 with `SubscriptionStoreView`. Entitlements come from `Transaction.currentEntitlements`, with no server needed at launch. |
 | Meal reminders | Local notifications scheduled on the device from the day's plan |
 | Optional AI wording | Foundation Models (on-device; iOS 26+, Apple Intelligence devices) |
 | Later | WidgetKit, Live Activities, Apple Watch, WorkoutKit |
@@ -429,6 +452,9 @@ Supabase Team ($599/mo) plus its HIPAA add-on (the price isn't published; a 2025
 - WHOOP API Terms of Use, effective 2026-10-06: https://developer.whoop.com/api-terms-of-use/
 - WHOOP app approval tiers: https://developer.whoop.com/docs/developing/app-approval/
 - Intervals.icu API access (updated 2026-10-14): https://forum.intervals.icu/t/api-access-to-intervals-icu/609
+- Intervals.icu API Terms and Conditions, effective 2025-10-23: https://forum.intervals.icu/t/intervals-icu-api-terms-and-conditions/114087
+- ACSM/AND/DC 2016 position stand, full text (hosted copy): http://drugfreesport.org.za/wp-content/uploads/2018/04/Position-stand-on-Nutrition-Athletic-Performance-ACSM-2016-1.pdf
+- Astra review of this report and the backlog (2026-10-23): `docs/reviews/2026-10-23-astra-review.md`, with the engine contract in `docs/reviews/2026-10-23-astra-2b-engine.md`
 - TrainingPeaks API help: https://help.trainingpeaks.com/hc/en-us/articles/234441128-TrainingPeaks-API
 - TrainingPeaks partner API update (2026-09-12): https://www.trainingpeaks.com/blog/an-update-on-trainingpeaks-partner-api/
 - TrainingPeaks calendar feed: https://help.trainingpeaks.com/hc/en-us/articles/204072184-Sync-your-calendar
