@@ -12,3 +12,4 @@ tmp/
 
 # Supabase CLI
 supabase/.temp/
+.hallmark/
